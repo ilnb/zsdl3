@@ -24,9 +24,9 @@ pub const SDL_AssertData = extern struct {
 };
 
 // Assert functions
-extern fn SDL_SetAssertionHandler(handler: ?*const fn (?*const SDL_AssertData, ?*anyopaque) callconv(.C) SDL_AssertState, userdata: ?*anyopaque) void;
-extern fn SDL_GetDefaultAssertionHandler() ?*const fn (?*const SDL_AssertData, ?*anyopaque) callconv(.C) SDL_AssertState;
-extern fn SDL_GetAssertionHandler(userdata: ?*?*anyopaque) ?*const fn (?*const SDL_AssertData, ?*anyopaque) callconv(.C) SDL_AssertState;
+extern fn SDL_SetAssertionHandler(handler: ?*const fn (?*const SDL_AssertData, ?*anyopaque) callconv(.c) SDL_AssertState, userdata: ?*anyopaque) void;
+extern fn SDL_GetDefaultAssertionHandler() ?*const fn (?*const SDL_AssertData, ?*anyopaque) callconv(.c) SDL_AssertState;
+extern fn SDL_GetAssertionHandler(userdata: ?*?*anyopaque) ?*const fn (?*const SDL_AssertData, ?*anyopaque) callconv(.c) SDL_AssertState;
 extern fn SDL_GetAssertionReport() ?*const SDL_AssertData;
 extern fn SDL_ResetAssertionReport() void;
 extern fn SDL_TriggerBreakpoint() void;

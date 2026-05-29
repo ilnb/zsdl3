@@ -4,8 +4,8 @@
 const core = @import("core.zig");
 
 // Clipboard callback types
-pub const SDL_ClipboardDataCallback = ?*const fn (?*anyopaque, [*:0]const u8, ?*usize) callconv(.C) ?*const anyopaque;
-pub const SDL_ClipboardCleanupCallback = ?*const fn (?*anyopaque) callconv(.C) void;
+pub const SDL_ClipboardDataCallback = ?*const fn (?*anyopaque, [*:0]const u8, ?*usize) callconv(.c) ?*const anyopaque;
+pub const SDL_ClipboardCleanupCallback = ?*const fn (?*anyopaque) callconv(.c) void;
 
 // Clipboard functions
 extern fn SDL_SetClipboardText(text: [*:0]const u8) bool;
