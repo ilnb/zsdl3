@@ -4,16 +4,16 @@
 const video = @import("video.zig");
 
 // Metal view (opaque)
-pub const SDL_MetalView = opaque {};
+pub const MetalView = opaque {};
 
 // Metal functions
 extern fn SDL_Metal_LoadLibrary() bool;
 extern fn SDL_Metal_GetLibrary() ?*anyopaque;
 extern fn SDL_Metal_UnloadLibrary() void;
-extern fn SDL_Metal_CreateView(window: ?*video.SDL_Window) ?*SDL_MetalView;
-extern fn SDL_Metal_DestroyView(view: ?*SDL_MetalView) void;
-extern fn SDL_Metal_GetLayer(view: ?*SDL_MetalView) ?*anyopaque;
-extern fn SDL_Metal_GetDrawableSize(window: ?*video.SDL_Window, w: ?*c_int, h: ?*c_int) void;
+extern fn SDL_Metal_CreateView(window: ?*video.WindowType) ?*MetalView;
+extern fn SDL_Metal_DestroyView(view: ?*MetalView) void;
+extern fn SDL_Metal_GetLayer(view: ?*MetalView) ?*anyopaque;
+extern fn SDL_Metal_GetDrawableSize(window: ?*video.WindowType, w: ?*c_int, h: ?*c_int) void;
 
 // Public API
 pub const loadLibrary = SDL_Metal_LoadLibrary;

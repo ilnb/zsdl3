@@ -40,7 +40,6 @@ pub fn build(b: *std.Build) void {
     });
     renderer.root_module.linkSystemLibrary("SDL3", .{});
     b.installArtifact(renderer);
-
     const run_renderer_step = b.step("run-renderer", "Run the renderer example");
     const run_renderer_cmd = b.addRunArtifact(renderer);
     run_renderer_step.dependOn(&run_renderer_cmd.step);
@@ -63,7 +62,6 @@ pub fn build(b: *std.Build) void {
     });
     cube_3d.root_module.linkSystemLibrary("SDL3", .{});
     b.installArtifact(cube_3d);
-
     const run_cube_3d_step = b.step("run-cube-3d", "Run the 3D cube example");
     const run_cube_3d_cmd = b.addRunArtifact(cube_3d);
     run_cube_3d_step.dependOn(&run_cube_3d_cmd.step);
@@ -86,7 +84,6 @@ pub fn build(b: *std.Build) void {
     });
     gpu.root_module.linkSystemLibrary("SDL3", .{});
     b.installArtifact(gpu);
-
     const run_gpu_step = b.step("run-gpu", "Run the GPU example");
     const run_gpu_cmd = b.addRunArtifact(gpu);
     run_gpu_step.dependOn(&run_gpu_cmd.step);
@@ -110,7 +107,6 @@ pub fn build(b: *std.Build) void {
     image.root_module.linkSystemLibrary("SDL3", .{});
     image.root_module.linkSystemLibrary("SDL3_image", .{});
     b.installArtifact(image);
-
     const run_image_step = b.step("run-image", "Run the image example");
     const run_image_cmd = b.addRunArtifact(image);
     run_image_cmd.setCwd(b.path("examples"));
@@ -134,7 +130,6 @@ pub fn build(b: *std.Build) void {
     });
     basic_2d.root_module.linkSystemLibrary("SDL3", .{});
     b.installArtifact(basic_2d);
-
     const run_basic_2d_step = b.step("run-basic-2d", "Run the basic 2D example");
     const run_basic_2d_cmd = b.addRunArtifact(basic_2d);
     run_basic_2d_step.dependOn(&run_basic_2d_cmd.step);
@@ -158,7 +153,6 @@ pub fn build(b: *std.Build) void {
     ttf.root_module.linkSystemLibrary("SDL3", .{});
     ttf.root_module.linkSystemLibrary("SDL3_ttf", .{});
     b.installArtifact(ttf);
-
     const run_ttf_step = b.step("run-ttf", "Run the TTF example");
     const run_ttf_cmd = b.addRunArtifact(ttf);
     run_ttf_cmd.setCwd(b.path("examples"));
@@ -183,7 +177,6 @@ pub fn build(b: *std.Build) void {
     text_editor.root_module.linkSystemLibrary("SDL3", .{});
     text_editor.root_module.linkSystemLibrary("SDL3_ttf", .{});
     b.installArtifact(text_editor);
-
     const run_text_editor_step = b.step("run-text-editor", "Run the text editor example");
     const run_text_editor_cmd = b.addRunArtifact(text_editor);
     run_text_editor_cmd.setCwd(b.path("examples"));
@@ -207,7 +200,6 @@ pub fn build(b: *std.Build) void {
     });
     audio.root_module.linkSystemLibrary("SDL3", .{});
     b.installArtifact(audio);
-
     const run_audio_step = b.step("run-audio", "Run the audio example");
     const run_audio_cmd = b.addRunArtifact(audio);
     run_audio_step.dependOn(&run_audio_cmd.step);
@@ -230,7 +222,6 @@ pub fn build(b: *std.Build) void {
     });
     dialog.root_module.linkSystemLibrary("SDL3", .{});
     b.installArtifact(dialog);
-
     const run_dialog_step = b.step("run-dialog", "Run the dialog example");
     const run_dialog_cmd = b.addRunArtifact(dialog);
     run_dialog_cmd.setCwd(b.path("examples"));
@@ -254,7 +245,6 @@ pub fn build(b: *std.Build) void {
     });
     process.root_module.linkSystemLibrary("SDL3", .{});
     b.installArtifact(process);
-
     const run_process_step = b.step("run-process", "Run the process example");
     const run_process_cmd = b.addRunArtifact(process);
     run_process_step.dependOn(&run_process_cmd.step);
@@ -277,7 +267,6 @@ pub fn build(b: *std.Build) void {
     });
     clipboard.root_module.linkSystemLibrary("SDL3", .{});
     b.installArtifact(clipboard);
-
     const run_clipboard_step = b.step("run-clipboard", "Run the clipboard example");
     const run_clipboard_cmd = b.addRunArtifact(clipboard);
     run_clipboard_step.dependOn(&run_clipboard_cmd.step);
@@ -286,7 +275,7 @@ pub fn build(b: *std.Build) void {
         run_clipboard_cmd.addArgs(args);
     }
 
-    b.installArtifact(exe);
+    // b.installArtifact(exe);
 
     const run_step = b.step("run", "Run the app");
 

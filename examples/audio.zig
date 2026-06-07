@@ -7,8 +7,8 @@
 const std = @import("std");
 const zsdl3 = @import("zsdl3");
 
-pub fn main() void {
-    if (!zsdl3.init(zsdl3.SDL_INIT_AUDIO)) {
+pub fn main(init: std.process.Init) void {
+    if (!zsdl3.init(zsdl3.INIT_AUDIO)) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.log.err("Failed to initialize SDL: {s}", .{err});
         return;
@@ -39,13 +39,13 @@ pub fn main() void {
         }
     }
 
-    const spec = zsdl3.SDL_AudioSpec{
-        .format = zsdl3.SDL_AUDIO_F32LE,
+    const spec = zsdl3.AudioSpec{
+        .format = zsdl3.AUDIO_F32LE,
         .channels = 1,
         .freq = 48000,
     };
 
-    const device = zsdl3.openAudioDevice(zsdl3.SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec);
+    const device = zsdl3.openAudioDevice(zsdl3.AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec);
     if (device == 0) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.log.err("Failed to open audio device: {s}", .{err});
@@ -53,7 +53,7 @@ pub fn main() void {
     }
     defer zsdl3.closeAudioDevice(device);
 
-    var got_spec: zsdl3.SDL_AudioSpec = undefined;
+    var got_spec: zsdl3.AudioSpec = undefined;
     var sample_frames: c_int = 0;
     _ = zsdl3.getAudioDeviceFormat(device, &got_spec, &sample_frames);
     std.log.info("Opened device: {}Hz {}ch format={}", .{ got_spec.freq, got_spec.channels, got_spec.format });
@@ -80,9 +80,8 @@ pub fn main() void {
     const num_samples: usize = @intFromFloat(sample_rate * duration_sec);
     var samples: []f32 = undefined;
 
-    const allocator = std.heap.page_allocator;
-    const buf = allocator.alloc(u8, num_samples * @sizeOf(f32)) catch return;
-    defer allocator.free(buf);
+    const ga = init.gpa;
+    const buf = ga.alloc(u8, num_samples * @sizeOf(f32)) catch return;
     samples = @as([]f32, @ptrCast(@alignCast(buf)));
 
     for (0..num_samples) |n| {
@@ -103,12 +102,12 @@ pub fn main() void {
     var running = true;
     var frame: u32 = 0;
     while (running and frame < 60 * 3) : (frame += 1) {
-        var event: zsdl3.SDL_Event = undefined;
+        var event: zsdl3.Event = undefined;
         while (zsdl3.pollEvent(&event)) {
             switch (event.type) {
-                zsdl3.SDL_EVENT_QUIT => running = false,
-                zsdl3.SDL_EVENT_KEY_DOWN => {
-                    if (event.key.scancode == zsdl3.SDL_SCANCODE_ESCAPE) running = false;
+                zsdl3.EVENT_QUIT => running = false,
+                zsdl3.EVENT_KEY_DOWN => {
+                    if (event.key.scancode == zsdl3.SCANCODE_ESCAPE) running = false;
                 },
                 else => {},
             }

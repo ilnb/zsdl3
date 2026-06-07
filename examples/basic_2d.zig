@@ -10,7 +10,7 @@ const zsdl3 = @import("zsdl3");
 
 pub fn main() void {
     // Initialize SDL with video subsystem
-    if (!zsdl3.init(zsdl3.SDL_INIT_VIDEO)) {
+    if (!zsdl3.init(zsdl3.INIT_VIDEO)) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.debug.print("Failed to initialize SDL: {s}\n", .{err});
         return;
@@ -18,7 +18,7 @@ pub fn main() void {
     defer zsdl3.quit();
 
     // Create a window
-    const window = zsdl3.createWindow("Basic 2D Example", 800, 600, zsdl3.SDL_WINDOW_RESIZABLE);
+    const window = zsdl3.createWindow("Basic 2D Example", 800, 600, zsdl3.WINDOW_RESIZABLE);
     if (window == null) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.debug.print("Failed to create window: {s}\n", .{err});
@@ -36,13 +36,13 @@ pub fn main() void {
     defer zsdl3.destroyRenderer(renderer);
 
     // Rect intersection test
-    const rect_a = zsdl3.SDL_FRect{ .x = 100, .y = 100, .w = 200, .h = 200 };
-    const rect_b = zsdl3.SDL_FRect{ .x = 200, .y = 200, .w = 200, .h = 200 };
-    const rect_c = zsdl3.SDL_FRect{ .x = 500, .y = 500, .w = 100, .h = 100 };
+    const rect_a = zsdl3.FRect{ .x = 100, .y = 100, .w = 200, .h = 200 };
+    const rect_b = zsdl3.FRect{ .x = 200, .y = 200, .w = 200, .h = 200 };
+    const rect_c = zsdl3.FRect{ .x = 500, .y = 500, .w = 100, .h = 100 };
     std.log.info("A intersects B: {}", .{zsdl3.hasRectIntersectionFloat(&rect_a, &rect_b)});
     std.log.info("A intersects C: {}", .{zsdl3.hasRectIntersectionFloat(&rect_a, &rect_c)});
 
-    var intersection: zsdl3.SDL_FRect = undefined;
+    var intersection: zsdl3.FRect = undefined;
     if (zsdl3.getRectIntersectionFloat(&rect_a, &rect_b, &intersection)) {
         std.log.info("Intersection rect: x={d:.0} y={d:.0} w={d:.0} h={d:.0}", .{ intersection.x, intersection.y, intersection.w, intersection.h });
     }
@@ -51,12 +51,12 @@ pub fn main() void {
     var running = true;
     while (running) {
         // Handle events
-        var event: zsdl3.SDL_Event = undefined;
+        var event: zsdl3.Event = undefined;
         while (zsdl3.pollEvent(&event)) {
             switch (event.type) {
-                zsdl3.SDL_EVENT_QUIT => running = false,
-                zsdl3.SDL_EVENT_KEY_DOWN => {
-                    if (event.key.scancode == zsdl3.SDL_SCANCODE_ESCAPE) {
+                zsdl3.EVENT_QUIT => running = false,
+                zsdl3.EVENT_KEY_DOWN => {
+                    if (event.key.scancode == zsdl3.SCANCODE_ESCAPE) {
                         running = false;
                     }
                 },

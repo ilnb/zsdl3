@@ -1,12 +1,6 @@
 // SDL3 Stdinc Bindings
 // Standard includes: memory, string, math helpers
 
-const core = @import("core.zig");
-
-// Import types
-pub const Sint64 = core.Sint64;
-pub const Uint64 = core.Uint64;
-
 // Stdinc functions
 extern fn SDL_memset(dst: ?*anyopaque, c: c_int, len: usize) ?*anyopaque;
 extern fn SDL_memcpy(dst: ?*anyopaque, src: ?*const anyopaque, len: usize) ?*anyopaque;
@@ -31,14 +25,14 @@ extern fn SDL_itoa(value: c_int, str: ?[*:0]u8, radix: c_int) ?[*:0]u8;
 extern fn SDL_uitoa(value: c_uint, str: ?[*:0]u8, radix: c_int) ?[*:0]u8;
 extern fn SDL_ltoa(value: c_long, str: ?[*:0]u8, radix: c_int) ?[*:0]u8;
 extern fn SDL_ultoa(value: c_ulong, str: ?[*:0]u8, radix: c_int) ?[*:0]u8;
-extern fn SDL_lltoa(value: Sint64, str: ?[*:0]u8, radix: c_int) ?[*:0]u8;
-extern fn SDL_ulltoa(value: Uint64, str: ?[*:0]u8, radix: c_int) ?[*:0]u8;
+extern fn SDL_lltoa(value: i64, str: ?[*:0]u8, radix: c_int) ?[*:0]u8;
+extern fn SDL_ulltoa(value: u64, str: ?[*:0]u8, radix: c_int) ?[*:0]u8;
 extern fn SDL_atoi(str: ?[*:0]const u8) c_int;
 extern fn SDL_atof(str: ?[*:0]const u8) f64;
 extern fn SDL_strtol(str: ?[*:0]const u8, endp: ?*?[*:0]u8, base: c_int) c_long;
 extern fn SDL_strtoul(str: ?[*:0]const u8, endp: ?*?[*:0]u8, base: c_int) c_ulong;
-extern fn SDL_strtoll(str: ?[*:0]const u8, endp: ?*?[*:0]u8, base: c_int) Sint64;
-extern fn SDL_strtoull(str: ?[*:0]const u8, endp: ?*?[*:0]u8, base: c_int) Uint64;
+extern fn SDL_strtoll(str: ?[*:0]const u8, endp: ?*?[*:0]u8, base: c_int) i64;
+extern fn SDL_strtoull(str: ?[*:0]const u8, endp: ?*?[*:0]u8, base: c_int) u64;
 extern fn SDL_strtod(str: ?[*:0]const u8, endp: ?*?[*:0]u8) f64;
 extern fn SDL_abs(x: c_int) c_int;
 extern fn SDL_min(x: c_int, y: c_int) c_int;

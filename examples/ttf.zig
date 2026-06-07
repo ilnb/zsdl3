@@ -9,7 +9,7 @@ const zsdl3 = @import("zsdl3");
 
 pub fn main() void {
     // Initialize SDL with video subsystem
-    if (!zsdl3.init(zsdl3.SDL_INIT_VIDEO)) {
+    if (!zsdl3.init(zsdl3.INIT_VIDEO)) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.debug.print("Failed to initialize SDL: {s}\n", .{err});
         return;
@@ -25,7 +25,7 @@ pub fn main() void {
     defer zsdl3.ttf.quit();
 
     // Create a window
-    const window = zsdl3.createWindow("TTF Example", 800, 600, zsdl3.SDL_WINDOW_RESIZABLE);
+    const window = zsdl3.createWindow("TTF Example", 800, 600, zsdl3.WINDOW_RESIZABLE);
     if (window == null) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.debug.print("Failed to create window: {s}\n", .{err});
@@ -56,7 +56,7 @@ pub fn main() void {
         "arial.ttf",
     };
 
-    var font: ?*zsdl3.ttf.TTF_Font = null;
+    var font: ?*zsdl3.ttf.Font = null;
 
     for (font_paths) |path| {
         font = zsdl3.ttf.openFont(path, 48.0);
@@ -65,19 +65,19 @@ pub fn main() void {
             break;
         }
     }
-    defer if (font) |f| zsdl3.ttf.closeFont(f);
+    defer if (font) |f| zsdl3.closeFont(f);
 
     // Main loop
     var running = true;
 
     while (running) {
         // Handle events
-        var event: zsdl3.SDL_Event = undefined;
+        var event: zsdl3.Event = undefined;
         while (zsdl3.pollEvent(&event)) {
             switch (event.type) {
-                zsdl3.SDL_EVENT_QUIT => running = false,
-                zsdl3.SDL_EVENT_KEY_DOWN => {
-                    if (event.key.scancode == zsdl3.SDL_SCANCODE_ESCAPE) {
+                zsdl3.EVENT_QUIT => running = false,
+                zsdl3.EVENT_KEY_DOWN => {
+                    if (event.key.scancode == zsdl3.SCANCODE_ESCAPE) {
                         running = false;
                     }
                 },
@@ -91,7 +91,7 @@ pub fn main() void {
 
         // Render text if font is available
         if (font) |f| {
-            const white_color = zsdl3.SDL_Color{ .r = 255, .g = 255, .b = 255, .a = 255 };
+            const white_color = zsdl3.Color{ .r = 255, .g = 255, .b = 255, .a = 255 };
 
             // Render text to surface and then to texture
             // Pass 0 for length to use null-terminated string
@@ -101,8 +101,8 @@ pub fn main() void {
                     defer zsdl3.destroyTexture(tex);
                     var tex_w: f32 = 0;
                     var tex_h: f32 = 0;
-                    if (zsdl3.textureSize(tex, &tex_w, &tex_h)) {
-                        const text_rect = zsdl3.SDL_FRect{
+                    if (zsdl3.getTextureSize(tex, &tex_w, &tex_h)) {
+                        const text_rect = zsdl3.FRect{
                             .x = 50,
                             .y = 50,
                             .w = tex_w,
@@ -115,7 +115,7 @@ pub fn main() void {
         } else {
             // Show message if no font available
             _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 0, 255);
-            const msg_rect = zsdl3.SDL_FRect{
+            const msg_rect = zsdl3.FRect{
                 .x = 50,
                 .y = 250,
                 .w = 700,

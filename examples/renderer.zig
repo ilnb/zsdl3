@@ -6,10 +6,10 @@ const std = @import("std");
 const zsdl3 = @import("zsdl3");
 
 pub fn main() void {
-    if (!zsdl3.init(zsdl3.SDL_INIT_VIDEO)) return;
+    if (!zsdl3.init(zsdl3.INIT_VIDEO)) return;
     defer zsdl3.quit();
 
-    const window = zsdl3.createWindow("Renderer Test", 800, 600, zsdl3.SDL_WINDOW_RESIZABLE) orelse return;
+    const window = zsdl3.createWindow("Renderer Test", 800, 600, zsdl3.WINDOW_RESIZABLE) orelse return;
     defer zsdl3.destroyWindow(window);
 
     const renderer = zsdl3.createRenderer(window, null) orelse return;
@@ -35,10 +35,10 @@ pub fn main() void {
             tex_pixels[i + 3] = 255;
         }
     }
-    const tex: ?*zsdl3.SDL_Texture = zsdl3.createTexture(renderer, zsdl3.SDL_PIXELFORMAT_RGBA8888, zsdl3.SDL_TEXTUREACCESS_STATIC, tex_w, tex_h);
+    const tex: ?*zsdl3.Texture = zsdl3.createTexture(renderer, zsdl3.PIXELFORMAT_RGBA8888, zsdl3.TEXTUREACCESS_STATIC, tex_w, tex_h);
     if (tex) |t| {
         _ = zsdl3.updateTexture(t, null, &tex_pixels, tex_w * 4);
-        _ = zsdl3.setTextureScaleMode(t, zsdl3.SDL_SCALEMODE_LINEAR);
+        _ = zsdl3.setTextureScaleMode(t, .LINEAR);
         _ = zsdl3.setTextureColorMod(t, 200, 200, 255);
     }
 
@@ -46,12 +46,12 @@ pub fn main() void {
 
     var running = true;
     while (running) {
-        var event: zsdl3.SDL_Event = undefined;
+        var event: zsdl3.Event = undefined;
         while (zsdl3.pollEvent(&event)) {
             switch (event.type) {
-                zsdl3.SDL_EVENT_QUIT => running = false,
-                zsdl3.SDL_EVENT_KEY_DOWN => {
-                    if (event.key.scancode == zsdl3.SDL_SCANCODE_ESCAPE) running = false;
+                zsdl3.EVENT_QUIT => running = false,
+                zsdl3.EVENT_KEY_DOWN => {
+                    if (event.key.scancode == zsdl3.SCANCODE_ESCAPE) running = false;
                 },
                 else => {},
             }
@@ -100,7 +100,7 @@ pub fn main() void {
         _ = zsdl3.renderFillRect(renderer, &.{ .x = 20, .y = 138, .w = 160, .h = 50 });
 
         _ = zsdl3.setRenderDrawColor(renderer, 50, 200, 200, 255);
-        _ = zsdl3.renderFillRects(renderer, &[_]zsdl3.SDL_FRect{
+        _ = zsdl3.renderFillRects(renderer, &[_]zsdl3.FRect{
             .{ .x = 220, .y = 78, .w = 100, .h = 42 },
             .{ .x = 220, .y = 140, .w = 100, .h = 42 },
         }, 2);
@@ -160,7 +160,7 @@ pub fn main() void {
             _ = zsdl3.renderTexture(renderer, t, null, &.{ .x = 420, .y = 240, .w = 64, .h = 64 });
 
             // Rotated 45 degrees
-            _ = zsdl3.renderTextureRotated(renderer, t, null, &.{ .x = 530, .y = 240, .w = 64, .h = 64 }, 45.0, null, zsdl3.SDL_FLIP_NONE);
+            _ = zsdl3.renderTextureRotated(renderer, t, null, &.{ .x = 530, .y = 240, .w = 64, .h = 64 }, 45.0, null, .NONE);
 
             // Scaled up
             _ = zsdl3.renderTexture(renderer, t, null, &.{ .x = 640, .y = 235, .w = 80, .h = 80 });

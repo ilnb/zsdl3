@@ -1,60 +1,61 @@
-const core = @import("core.zig");
-pub const SDL_CameraID = core.Uint32;
+const props = @import("props.zig");
 const pixels = @import("pixels.zig");
 const surface = @import("surface.zig");
 
-pub const SDL_Camera = opaque {};
+pub const ID = u32;
+pub const Camera = opaque {};
+pub const Colorspace = u32;
 
-pub const SDL_CameraSpec = extern struct {
-    format: pixels.SDL_PixelFormat,
-    colorspace: core.Uint32, // SDL_Colorspace (Uint32)
+pub const Spec = extern struct {
+    format: pixels.Format,
+    colorspace: u32, // SDL_Colorspace (u32)
     width: c_int,
     height: c_int,
     framerate_numerator: c_int,
     framerate_denominator: c_int,
 };
 
-pub const SDL_CameraPosition = enum(c_int) {
-    SDL_CAMERA_POSITION_UNKNOWN,
-    SDL_CAMERA_POSITION_FRONT_FACING,
-    SDL_CAMERA_POSITION_BACK_FACING,
+pub const Position = enum(c_int) {
+    UNKNOWN,
+    FRONT_FACING,
+    BACK_FACING,
 };
 
-pub const SDL_CameraPermissionState = enum(c_int) {
-    SDL_CAMERA_PERMISSION_STATE_DENIED = -1,
-    SDL_CAMERA_PERMISSION_STATE_PENDING,
-    SDL_CAMERA_PERMISSION_STATE_APPROVED,
+pub const PermissionState = enum(c_int) {
+    DENIED = -1,
+    PENDING,
+    APPROVED,
 };
 
 extern fn SDL_GetNumCameraDrivers() c_int;
 extern fn SDL_GetCameraDriver(index: c_int) ?[*:0]const u8;
 extern fn SDL_GetCurrentCameraDriver() ?[*:0]const u8;
-extern fn SDL_GetCameras(count: ?*c_int) ?[*]SDL_CameraID;
-extern fn SDL_GetCameraSupportedFormats(instance_id: SDL_CameraID, count: ?*c_int) ?[*]?*SDL_CameraSpec;
-extern fn SDL_GetCameraName(instance_id: SDL_CameraID) ?[*:0]const u8;
-extern fn SDL_GetCameraPosition(instance_id: SDL_CameraID) SDL_CameraPosition;
-extern fn SDL_OpenCamera(instance_id: SDL_CameraID, spec: ?*const SDL_CameraSpec) ?*SDL_Camera;
-extern fn SDL_GetCameraPermissionState(camera: ?*SDL_Camera) SDL_CameraPermissionState;
-extern fn SDL_GetCameraID(camera: ?*SDL_Camera) SDL_CameraID;
-extern fn SDL_GetCameraProperties(camera: ?*SDL_Camera) core.SDL_PropertiesID;
-extern fn SDL_GetCameraFormat(camera: ?*SDL_Camera, spec: ?*SDL_CameraSpec) bool;
-extern fn SDL_AcquireCameraFrame(camera: ?*SDL_Camera, timestamp: ?*core.Uint64) ?*surface.SDL_Surface;
-extern fn SDL_ReleaseCameraFrame(camera: ?*SDL_Camera, frame: ?*surface.SDL_Surface) void;
-extern fn SDL_CloseCamera(camera: ?*SDL_Camera) void;
+extern fn SDL_GetCameras(count: ?*c_int) ?[*]ID;
+extern fn SDL_GetCameraSupportedFormats(instance_id: ID, count: ?*c_int) ?[*]?*Spec;
+extern fn SDL_GetCameraName(instance_id: ID) ?[*:0]const u8;
+extern fn SDL_GetCameraPosition(instance_id: ID) Position;
+extern fn SDL_OpenCamera(instance_id: ID, spec: ?*const Spec) ?*Camera;
+extern fn SDL_GetCameraPermissionState(camera: ?*Camera) PermissionState;
+extern fn SDL_GetCameraID(camera: ?*Camera) ID;
+extern fn SDL_GetCameraProperties(camera: ?*Camera) props.ID;
+extern fn SDL_GetCameraFormat(camera: ?*Camera, spec: ?*Spec) bool;
+extern fn SDL_AcquireCameraFrame(camera: ?*Camera, timestamp: ?*u64) ?*surface.Surface;
+extern fn SDL_ReleaseCameraFrame(camera: ?*Camera, frame: ?*surface.Surface) void;
+extern fn SDL_CloseCamera(camera: ?*Camera) void;
 
 // Public API
-pub const getNumCameraDrivers = SDL_GetNumCameraDrivers;
-pub const getCameraDriver = SDL_GetCameraDriver;
-pub const getCurrentCameraDriver = SDL_GetCurrentCameraDriver;
-pub const getCameras = SDL_GetCameras;
-pub const getCameraSupportedFormats = SDL_GetCameraSupportedFormats;
-pub const getCameraName = SDL_GetCameraName;
-pub const getCameraPosition = SDL_GetCameraPosition;
-pub const openCamera = SDL_OpenCamera;
-pub const getCameraPermissionState = SDL_GetCameraPermissionState;
-pub const getCameraID = SDL_GetCameraID;
-pub const getCameraProperties = SDL_GetCameraProperties;
-pub const getCameraFormat = SDL_GetCameraFormat;
-pub const acquireCameraFrame = SDL_AcquireCameraFrame;
-pub const releaseCameraFrame = SDL_ReleaseCameraFrame;
-pub const closeCamera = SDL_CloseCamera;
+pub const getNumDrivers = SDL_GetNumCameraDrivers;
+pub const getDriver = SDL_GetCameraDriver;
+pub const getCurrentDriver = SDL_GetCurrentCameraDriver;
+pub const gets = SDL_GetCameras;
+pub const getSupportedFormats = SDL_GetCameraSupportedFormats;
+pub const getName = SDL_GetCameraName;
+pub const getPosition = SDL_GetCameraPosition;
+pub const open = SDL_OpenCamera;
+pub const getPermissionState = SDL_GetCameraPermissionState;
+pub const getID = SDL_GetCameraID;
+pub const getProps = SDL_GetCameraProperties;
+pub const getFormat = SDL_GetCameraFormat;
+pub const acquireFrame = SDL_AcquireCameraFrame;
+pub const releaseFrame = SDL_ReleaseCameraFrame;
+pub const close = SDL_CloseCamera;

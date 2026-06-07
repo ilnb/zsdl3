@@ -1,55 +1,48 @@
 // SDL3 AsyncIO Bindings
 // Asynchronous file I/O
 
-const core = @import("core.zig");
-
-// Import types
-pub const Uint64 = core.Uint64;
-pub const Sint64 = core.Sint64;
-pub const Sint32 = core.Sint32;
-
 // AsyncIO handle
-pub const SDL_AsyncIO = opaque {};
+pub const AsyncIO = opaque {};
 
 // AsyncIO queue
-pub const SDL_AsyncIOQueue = opaque {};
+pub const Queue = opaque {};
 
 // AsyncIO task type
-pub const SDL_AsyncIOTaskType = enum(c_int) {
-    SDL_ASYNCIO_TASK_READ,
-    SDL_ASYNCIO_TASK_WRITE,
-    SDL_ASYNCIO_TASK_CLOSE,
+pub const TaskType = enum(c_int) {
+    READ,
+    WRITE,
+    CLOSE,
 };
 
 // AsyncIO result
-pub const SDL_AsyncIOResult = enum(c_int) {
-    SDL_ASYNCIO_COMPLETE,
-    SDL_ASYNCIO_FAILURE,
-    SDL_ASYNCIO_CANCELED,
+pub const Result = enum(c_int) {
+    COMPLETE,
+    FAILURE,
+    CANCELED,
 };
 
 // AsyncIO outcome
-pub const SDL_AsyncIOOutcome = extern struct {
-    asyncio: ?*SDL_AsyncIO,
-    type_: SDL_AsyncIOTaskType,
-    result: SDL_AsyncIOResult,
+pub const Outcome = extern struct {
+    asyncio: ?*AsyncIO,
+    type_: TaskType,
+    result: Result,
     buffer: ?*anyopaque,
-    offset: Uint64,
-    bytes_requested: Uint64,
-    bytes_transferred: Uint64,
+    offset: u64,
+    bytes_requested: u64,
+    bytes_transferred: u64,
     userdata: ?*anyopaque,
 };
 
 // AsyncIO functions
-extern fn SDL_AsyncIOFromFile(file: ?[*:0]const u8, mode: ?[*:0]const u8) ?*SDL_AsyncIO;
-extern fn SDL_GetAsyncIOSize(asyncio: ?*SDL_AsyncIO) Sint64;
-extern fn SDL_ReadAsyncIO(asyncio: ?*SDL_AsyncIO, ptr: ?*anyopaque, offset: Uint64, size: Uint64, queue: ?*SDL_AsyncIOQueue, userdata: ?*anyopaque) bool;
-extern fn SDL_WriteAsyncIO(asyncio: ?*SDL_AsyncIO, ptr: ?*const anyopaque, offset: Uint64, size: Uint64, queue: ?*SDL_AsyncIOQueue, userdata: ?*anyopaque) bool;
-extern fn SDL_CloseAsyncIO(asyncio: ?*SDL_AsyncIO, flush: bool, queue: ?*SDL_AsyncIOQueue, userdata: ?*anyopaque) bool;
-extern fn SDL_CreateAsyncIOQueue() ?*SDL_AsyncIOQueue;
-extern fn SDL_DestroyAsyncIOQueue(queue: ?*SDL_AsyncIOQueue) void;
-extern fn SDL_GetAsyncIOResult(queue: ?*SDL_AsyncIOQueue, outcome: ?*SDL_AsyncIOOutcome) bool;
-extern fn SDL_WaitAsyncIOResult(queue: ?*SDL_AsyncIOQueue, outcome: ?*SDL_AsyncIOOutcome, timeoutMS: Sint32) bool;
+extern fn SDL_AsyncIOFromFile(file: ?[*:0]const u8, mode: ?[*:0]const u8) ?*AsyncIO;
+extern fn SDL_GetAsyncIOSize(asyncio: ?*AsyncIO) i64;
+extern fn SDL_ReadAsyncIO(asyncio: ?*AsyncIO, ptr: ?*anyopaque, offset: u64, size: u64, queue: ?*Queue, userdata: ?*anyopaque) bool;
+extern fn SDL_WriteAsyncIO(asyncio: ?*AsyncIO, ptr: ?*const anyopaque, offset: u64, size: u64, queue: ?*Queue, userdata: ?*anyopaque) bool;
+extern fn SDL_CloseAsyncIO(asyncio: ?*AsyncIO, flush: bool, queue: ?*Queue, userdata: ?*anyopaque) bool;
+extern fn SDL_CreateAsyncIOQueue() ?*Queue;
+extern fn SDL_DestroyAsyncIOQueue(queue: ?*Queue) void;
+extern fn SDL_GetAsyncIOResult(queue: ?*Queue, outcome: ?*Outcome) bool;
+extern fn SDL_WaitAsyncIOResult(queue: ?*Queue, outcome: ?*Outcome, timeoutMS: i32) bool;
 
 // Public API
 pub const asyncIOFromFile = SDL_AsyncIOFromFile;

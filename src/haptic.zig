@@ -1,177 +1,169 @@
 // SDL3 Haptic Bindings
 // Force feedback
 
-const core = @import("core.zig");
 const input = @import("input.zig");
 
-// Import types
-pub const Uint8 = core.Uint8;
-pub const Uint16 = core.Uint16;
-pub const Uint32 = core.Uint32;
-pub const Sint16 = core.Sint16;
-pub const Sint32 = core.Sint32;
+pub const ID = u32;
 
 // Haptic structs
-pub const SDL_Haptic = opaque {};
+pub const Haptic = opaque {};
 
 // Haptic effect types
-pub const SDL_HapticEffect = extern union {
-    type: Uint16,
-    constant: SDL_HapticConstant,
-    periodic: SDL_HapticPeriodic,
-    condition: SDL_HapticCondition,
-    ramp: SDL_HapticRamp,
-    custom: SDL_HapticCustom,
+pub const Effect = extern union {
+    type: u16,
+    constant: Constant,
+    periodic: Periodic,
+    condition: Condition,
+    ramp: Ramp,
+    custom: Custom,
 };
 
 // Haptic effect subtypes
-pub const SDL_HapticConstant = extern struct {
-    type: Uint16,
-    direction: SDL_HapticDirection,
-    length: Uint32,
-    delay: Uint16,
-    button: Uint16,
-    interval: Uint16,
-    level: Sint16,
-    attack_length: Uint16,
-    attack_level: Uint16,
-    fade_length: Uint16,
-    fade_level: Uint16,
+pub const Constant = extern struct {
+    type: u16,
+    direction: Direction,
+    length: u32,
+    delay: u16,
+    button: u16,
+    interval: u16,
+    level: i16,
+    attack_length: u16,
+    attack_level: u16,
+    fade_length: u16,
+    fade_level: u16,
 };
 
-pub const SDL_HapticPeriodic = extern struct {
-    type: Uint16,
-    direction: SDL_HapticDirection,
-    length: Uint32,
-    delay: Uint16,
-    button: Uint16,
-    interval: Uint16,
-    period: Uint16,
-    magnitude: Sint16,
-    offset: Sint16,
-    phase: Uint16,
-    attack_length: Uint16,
-    attack_level: Uint16,
-    fade_length: Uint16,
-    fade_level: Uint16,
+pub const Periodic = extern struct {
+    type: u16,
+    direction: Direction,
+    length: u32,
+    delay: u16,
+    button: u16,
+    interval: u16,
+    period: u16,
+    magnitude: i16,
+    offset: i16,
+    phase: u16,
+    attack_length: u16,
+    attack_level: u16,
+    fade_length: u16,
+    fade_level: u16,
 };
 
-pub const SDL_HapticCondition = extern struct {
-    type: Uint16,
-    direction: SDL_HapticDirection,
-    length: Uint32,
-    delay: Uint16,
-    button: Uint16,
-    interval: Uint16,
-    right_sat: [3]Uint16,
-    left_sat: [3]Uint16,
-    right_coeff: [3]Sint16,
-    left_coeff: [3]Sint16,
-    deadband: [3]Uint16,
-    center: [3]Sint16,
+pub const Condition = extern struct {
+    type: u16,
+    direction: Direction,
+    length: u32,
+    delay: u16,
+    button: u16,
+    interval: u16,
+    right_sat: [3]u16,
+    left_sat: [3]u16,
+    right_coeff: [3]i16,
+    left_coeff: [3]i16,
+    deadband: [3]u16,
+    center: [3]i16,
 };
 
-pub const SDL_HapticRamp = extern struct {
-    type: Uint16,
-    direction: SDL_HapticDirection,
-    length: Uint32,
-    delay: Uint16,
-    button: Uint16,
-    interval: Uint16,
-    start: Sint16,
-    end: Sint16,
-    attack_length: Uint16,
-    attack_level: Uint16,
-    fade_length: Uint16,
-    fade_level: Uint16,
+pub const Ramp = extern struct {
+    type: u16,
+    direction: Direction,
+    length: u32,
+    delay: u16,
+    button: u16,
+    interval: u16,
+    start: i16,
+    end: i16,
+    attack_length: u16,
+    attack_level: u16,
+    fade_length: u16,
+    fade_level: u16,
 };
 
-pub const SDL_HapticCustom = extern struct {
-    type: Uint16,
-    direction: SDL_HapticDirection,
-    length: Uint32,
-    delay: Uint16,
-    button: Uint16,
-    interval: Uint16,
-    channels: Uint8,
-    period: Uint16,
-    samples: Uint16,
-    data: ?[*]Sint16,
-    attack_length: Uint16,
-    attack_level: Uint16,
-    fade_length: Uint16,
-    fade_level: Uint16,
+pub const Custom = extern struct {
+    type: u16,
+    direction: Direction,
+    length: u32,
+    delay: u16,
+    button: u16,
+    interval: u16,
+    channels: u8,
+    period: u16,
+    samples: u16,
+    data: ?[*]i16,
+    attack_length: u16,
+    attack_level: u16,
+    fade_length: u16,
+    fade_level: u16,
 };
 
-pub const SDL_HapticDirection = extern struct {
-    type: Uint8,
-    dir: [3]Sint32,
+pub const Direction = extern struct {
+    type: u8,
+    dir: [3]i32,
 };
-
-pub const SDL_HapticID = Uint32;
 
 // Haptic functions
-extern fn SDL_GetHaptics(count: ?*c_int) ?[*]SDL_HapticID;
-extern fn SDL_GetHapticName(haptic: ?*SDL_Haptic) ?[*:0]const u8;
-extern fn SDL_GetHapticNameForID(instance_id: SDL_HapticID) ?[*:0]const u8;
-extern fn SDL_OpenHaptic(instance_id: SDL_HapticID) ?*SDL_Haptic;
-extern fn SDL_GetHapticFromID(instance_id: SDL_HapticID) ?*SDL_Haptic;
-extern fn SDL_GetHapticID(haptic: ?*SDL_Haptic) SDL_HapticID;
-extern fn SDL_IsMouseHaptic() bool;
-extern fn SDL_OpenHapticFromMouse() ?*SDL_Haptic;
-extern fn SDL_IsJoystickHaptic(joystick: ?*input.SDL_Joystick) bool;
-extern fn SDL_OpenHapticFromJoystick(joystick: ?*input.SDL_Joystick) ?*SDL_Haptic;
-extern fn SDL_CloseHaptic(haptic: ?*SDL_Haptic) void;
-extern fn SDL_GetMaxHapticEffects(haptic: ?*SDL_Haptic) c_int;
-extern fn SDL_GetMaxHapticEffectsPlaying(haptic: ?*SDL_Haptic) c_int;
-extern fn SDL_GetHapticFeatures(haptic: ?*SDL_Haptic) c_uint;
-extern fn SDL_GetNumHapticAxes(haptic: ?*SDL_Haptic) c_int;
-extern fn SDL_HapticEffectSupported(haptic: ?*SDL_Haptic, effect: ?*SDL_HapticEffect) bool;
-extern fn SDL_CreateHapticEffect(haptic: ?*SDL_Haptic, effect: ?*const SDL_HapticEffect) c_int;
-extern fn SDL_UpdateHapticEffect(haptic: ?*SDL_Haptic, effect: c_int, data: ?*const SDL_HapticEffect) bool;
-extern fn SDL_RunHapticEffect(haptic: ?*SDL_Haptic, effect: c_int, iterations: Uint32) bool;
-extern fn SDL_StopHapticEffect(haptic: ?*SDL_Haptic, effect: c_int) bool;
-extern fn SDL_DestroyHapticEffect(haptic: ?*SDL_Haptic, effect: c_int) void;
-extern fn SDL_GetHapticEffectStatus(haptic: ?*SDL_Haptic, effect: c_int) bool;
-extern fn SDL_SetHapticGain(haptic: ?*SDL_Haptic, gain: c_int) bool;
-extern fn SDL_SetHapticAutocenter(haptic: ?*SDL_Haptic, autocenter: c_int) bool;
-extern fn SDL_PauseHaptic(haptic: ?*SDL_Haptic) bool;
-extern fn SDL_ResumeHaptic(haptic: ?*SDL_Haptic) bool;
-extern fn SDL_StopHapticEffects(haptic: ?*SDL_Haptic) bool;
-extern fn SDL_HapticRumbleSupported(haptic: ?*SDL_Haptic) bool;
-extern fn SDL_InitHapticRumble(haptic: ?*SDL_Haptic) bool;
-extern fn SDL_PlayHapticRumble(haptic: ?*SDL_Haptic, strength: f32, length: Uint32) bool;
-extern fn SDL_StopHapticRumble(haptic: ?*SDL_Haptic) bool;
+extern fn GetHaptics(count: ?*c_int) ?[*]ID;
+extern fn GetHapticName(haptic: ?*Haptic) ?[*:0]const u8;
+extern fn GetHapticNameForID(instance_id: ID) ?[*:0]const u8;
+extern fn OpenHaptic(instance_id: ID) ?*Haptic;
+extern fn GetHapticFromID(instance_id: ID) ?*Haptic;
+extern fn GetHapticID(haptic: ?*Haptic) ID;
+extern fn IsMouseHaptic() bool;
+extern fn OpenHapticFromMouse() ?*Haptic;
+extern fn IsJoystickHaptic(joystick: ?*input.Joystick) bool;
+extern fn OpenHapticFromJoystick(joystick: ?*input.Joystick) ?*Haptic;
+extern fn CloseHaptic(haptic: ?*Haptic) void;
+extern fn GetMaxHapticEffects(haptic: ?*Haptic) c_int;
+extern fn GetMaxHapticEffectsPlaying(haptic: ?*Haptic) c_int;
+extern fn GetHapticFeatures(haptic: ?*Haptic) c_uint;
+extern fn GetNumHapticAxes(haptic: ?*Haptic) c_int;
+extern fn HapticEffectSupported(haptic: ?*Haptic, effect: ?*Effect) bool;
+extern fn CreateHapticEffect(haptic: ?*Haptic, effect: ?*const Effect) c_int;
+extern fn UpdateHapticEffect(haptic: ?*Haptic, effect: c_int, data: ?*const Effect) bool;
+extern fn RunHapticEffect(haptic: ?*Haptic, effect: c_int, iterations: u32) bool;
+extern fn StopHapticEffect(haptic: ?*Haptic, effect: c_int) bool;
+extern fn DestroyHapticEffect(haptic: ?*Haptic, effect: c_int) void;
+extern fn GetHapticEffectStatus(haptic: ?*Haptic, effect: c_int) bool;
+extern fn SetHapticGain(haptic: ?*Haptic, gain: c_int) bool;
+extern fn SetHapticAutocenter(haptic: ?*Haptic, autocenter: c_int) bool;
+extern fn PauseHaptic(haptic: ?*Haptic) bool;
+extern fn ResumeHaptic(haptic: ?*Haptic) bool;
+extern fn StopHapticEffects(haptic: ?*Haptic) bool;
+extern fn HapticRumbleSupported(haptic: ?*Haptic) bool;
+extern fn InitHapticRumble(haptic: ?*Haptic) bool;
+extern fn PlayHapticRumble(haptic: ?*Haptic, strength: f32, length: u32) bool;
+extern fn StopHapticRumble(haptic: ?*Haptic) bool;
 
 // Public API
-pub const getHaptics = SDL_GetHaptics;
-pub const getHapticName = SDL_GetHapticName;
-pub const getHapticNameForID = SDL_GetHapticNameForID;
-pub const openHaptic = SDL_OpenHaptic;
-pub const getHapticFromID = SDL_GetHapticFromID;
-pub const getHapticID = SDL_GetHapticID;
-pub const isMouseHaptic = SDL_IsMouseHaptic;
-pub const openHapticFromMouse = SDL_OpenHapticFromMouse;
-pub const isJoystickHaptic = SDL_IsJoystickHaptic;
-pub const openHapticFromJoystick = SDL_OpenHapticFromJoystick;
-pub const closeHaptic = SDL_CloseHaptic;
-pub const getMaxHapticEffects = SDL_GetMaxHapticEffects;
-pub const getMaxHapticEffectsPlaying = SDL_GetMaxHapticEffectsPlaying;
-pub const getHapticFeatures = SDL_GetHapticFeatures;
-pub const getNumHapticAxes = SDL_GetNumHapticAxes;
-pub const hapticEffectSupported = SDL_HapticEffectSupported;
-pub const createHapticEffect = SDL_CreateHapticEffect;
-pub const updateHapticEffect = SDL_UpdateHapticEffect;
-pub const runHapticEffect = SDL_RunHapticEffect;
-pub const stopHapticEffect = SDL_StopHapticEffect;
-pub const destroyHapticEffect = SDL_DestroyHapticEffect;
-pub const getHapticEffectStatus = SDL_GetHapticEffectStatus;
-pub const setHapticGain = SDL_SetHapticGain;
-pub const setHapticAutocenter = SDL_SetHapticAutocenter;
-pub const pauseHaptic = SDL_PauseHaptic;
-pub const resumeHaptic = SDL_ResumeHaptic;
-pub const stopHapticEffects = SDL_StopHapticEffects;
-pub const hapticRumbleSupported = SDL_HapticRumbleSupported;
-pub const initHapticRumble = SDL_InitHapticRumble;
-pub const playHapticRumble = SDL_PlayHapticRumble;
-pub const stopHapticRumble = SDL_StopHapticRumble;
+pub const get = GetHaptics;
+pub const getName = GetHapticName;
+pub const getNameForID = GetHapticNameForID;
+pub const open = OpenHaptic;
+pub const getFromID = GetHapticFromID;
+pub const getID = GetHapticID;
+pub const isMouseHaptic = IsMouseHaptic;
+pub const openFromMouse = OpenHapticFromMouse;
+pub const isJoystickHaptic = IsJoystickHaptic;
+pub const openFromJoystick = OpenHapticFromJoystick;
+pub const close = CloseHaptic;
+pub const getMaxEffects = GetMaxHapticEffects;
+pub const getMaxEffectsPlaying = GetMaxHapticEffectsPlaying;
+pub const getFeatures = GetHapticFeatures;
+pub const getNumAxes = GetNumHapticAxes;
+pub const isEffectSupported = HapticEffectSupported;
+pub const createEffect = CreateHapticEffect;
+pub const updateEffect = UpdateHapticEffect;
+pub const runEffect = RunHapticEffect;
+pub const stopEffect = StopHapticEffect;
+pub const destroyEffect = DestroyHapticEffect;
+pub const getEffectStatus = GetHapticEffectStatus;
+pub const setGain = SetHapticGain;
+pub const setAutocenter = SetHapticAutocenter;
+pub const pause = PauseHaptic;
+pub const resumeHaptic = ResumeHaptic;
+pub const stopEffects = StopHapticEffects;
+pub const isRumbleSupported = HapticRumbleSupported;
+pub const initRumble = InitHapticRumble;
+pub const playRumble = PlayHapticRumble;
+pub const stopRumble = StopHapticRumble;

@@ -1,6 +1,6 @@
 // Image Loading Example
 // Loads and displays a PNG image using SDL3_image and core SDL.
-// Demonstrates: image loading via IMG_LoadTexture and SDL_LoadPNG,
+// Demonstrates: image loading via IMG_LoadTexture and LoadPNG,
 // pixel inspection, surface rotation, save-to-file, centered rendering.
 
 const std = @import("std");
@@ -10,14 +10,14 @@ const zsdl3 = @import("zsdl3");
 pub fn main() void {
     std.log.info("SDL3 Image Test", .{});
 
-    if (!zsdl3.init(zsdl3.SDL_INIT_VIDEO)) {
+    if (!zsdl3.init(zsdl3.INIT_VIDEO)) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.log.err("Failed to initialize SDL: {s}", .{err});
         return;
     }
     defer zsdl3.quit();
 
-    const window = zsdl3.createWindow("Image Test", 800, 600, zsdl3.SDL_WINDOW_RESIZABLE);
+    const window = zsdl3.createWindow("Image Test", 800, 600, zsdl3.WINDOW_RESIZABLE);
     if (window == null) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.log.err("Failed to create window: {s}", .{err});
@@ -33,7 +33,7 @@ pub fn main() void {
     }
     defer zsdl3.destroyRenderer(renderer);
 
-    std.log.info("SDL_image version: {d}", .{zsdl3.image.version()});
+    std.log.info("image version: {d}", .{zsdl3.image.version()});
 
     const test_image_path = "test.png";
 
@@ -49,9 +49,9 @@ pub fn main() void {
     }
 
     // --- Path 2: Load via core SDL LoadPNG ---
-    std.log.info("--- Loading via core SDL_LoadPNG ---", .{});
+    std.log.info("--- Loading via core LoadPNG ---", .{});
     const surface = zsdl3.loadPNG(test_image_path);
-    var rotated_surface: ?*zsdl3.surface.SDL_Surface = null;
+    var rotated_surface: ?*zsdl3.surface.Surface = null;
 
     if (surface) |surf| {
         std.log.info("Loaded PNG as surface: {}x{} {}bpp", .{ surf.w, surf.h, 8 });
@@ -82,12 +82,12 @@ pub fn main() void {
 
     var running = true;
     while (running) {
-        var event: zsdl3.SDL_Event = undefined;
+        var event: zsdl3.Event = undefined;
         while (zsdl3.pollEvent(&event)) {
             switch (event.type) {
-                zsdl3.SDL_EVENT_QUIT => running = false,
-                zsdl3.SDL_EVENT_KEY_DOWN => {
-                    if (event.key.scancode == zsdl3.SDL_SCANCODE_ESCAPE) {
+                zsdl3.EVENT_QUIT => running = false,
+                zsdl3.EVENT_KEY_DOWN => {
+                    if (event.key.scancode == zsdl3.SCANCODE_ESCAPE) {
                         running = false;
                     }
                 },
@@ -104,7 +104,7 @@ pub fn main() void {
             var win_h: c_int = 0;
             _ = zsdl3.getWindowSize(window, &win_w, &win_h);
 
-            const dst = zsdl3.SDL_FRect{
+            const dst = zsdl3.FRect{
                 .x = @floatFromInt(@divTrunc(win_w, 4) - 128),
                 .y = @floatFromInt(@divTrunc(win_h, 2) - 128),
                 .w = 256,
@@ -120,7 +120,7 @@ pub fn main() void {
                 var win_w: c_int = 0;
                 var win_h: c_int = 0;
                 _ = zsdl3.getWindowSize(window, &win_w, &win_h);
-                const dst2 = zsdl3.SDL_FRect{
+                const dst2 = zsdl3.FRect{
                     .x = @floatFromInt(@divTrunc(win_w * 3, 4) - 128),
                     .y = @floatFromInt(@divTrunc(win_h, 2) - 128),
                     .w = 256,

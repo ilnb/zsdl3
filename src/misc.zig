@@ -1,19 +1,11 @@
 // SDL3 Misc Bindings
 // Utility functions
 
-const core = @import("core.zig");
-const log = @import("log.zig");
-
-// Import types
-pub const Uint16 = core.Uint16;
-pub const Uint32 = core.Uint32;
-pub const SDL_LogPriority = log.SDL_LogPriority;
-
 // Misc functions
 extern fn SDL_OpenURL(url: [*:0]const u8) bool;
-extern fn SDL_CRC16(crc: Uint16, data: ?*const anyopaque, len: usize) Uint16;
-extern fn SDL_CRC32(crc: Uint32, data: ?*const anyopaque, len: usize) Uint32;
-extern fn SDL_murmur3_32(data: ?*const anyopaque, len: usize, seed: Uint32) Uint32;
+extern fn SDL_CRC16(crc: u16, data: ?*const anyopaque, len: usize) u16;
+extern fn SDL_CRC32(crc: u32, data: ?*const anyopaque, len: usize) u32;
+extern fn SDL_murmur3_32(data: ?*const anyopaque, len: usize, seed: u32) u32;
 extern fn SDL_GetNumAllocations() c_int;
 extern fn SDL_GetFullPath(path: [*:0]const u8) ?[*:0]const u8;
 

@@ -29,7 +29,7 @@ pub fn main() void {
     defer zsdl3.destroyProcess(process);
 
     // Query process properties
-    const props = zsdl3.getProcessProperties(process);
+    const props = zsdl3.getProcessProps(process);
     std.log.info("Process properties ID: {d}", .{props});
 
     std.log.info("Process created, waiting for output...", .{});

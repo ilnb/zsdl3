@@ -2,30 +2,30 @@
 // Custom assertion handling
 
 // Assert state
-pub const SDL_AssertState = enum(c_int) {
-    SDL_ASSERTION_RETRY,
-    SDL_ASSERTION_BREAK,
-    SDL_ASSERTION_ABORT,
-    SDL_ASSERTION_IGNORE,
-    SDL_ASSERTION_ALWAYS_IGNORE,
+pub const State = enum(c_int) {
+    RETRY,
+    BREAK,
+    ABORT,
+    IGNORE,
+    ALWAYS_IGNORE,
 };
 
 // Assert data
-pub const SDL_AssertData = extern struct {
+pub const Data = extern struct {
     always_ignore: bool,
     trigger_count: c_uint,
     condition: ?[*:0]const u8,
     filename: ?[*:0]const u8,
     linenum: c_int,
-    function: ?[*:0]const u8,
-    next: ?*SDL_AssertData,
+    fntion: ?[*:0]const u8,
+    next: ?*Data,
 };
 
 // Assert functions
-extern fn SDL_SetAssertionHandler(handler: ?*const fn (?*const SDL_AssertData, ?*anyopaque) callconv(.c) SDL_AssertState, userdata: ?*anyopaque) void;
-extern fn SDL_GetDefaultAssertionHandler() ?*const fn (?*const SDL_AssertData, ?*anyopaque) callconv(.c) SDL_AssertState;
-extern fn SDL_GetAssertionHandler(userdata: ?*?*anyopaque) ?*const fn (?*const SDL_AssertData, ?*anyopaque) callconv(.c) SDL_AssertState;
-extern fn SDL_GetAssertionReport() ?*const SDL_AssertData;
+extern fn SDL_SetAssertionHandler(handler: ?*const fn (?*const Data, ?*anyopaque) callconv(.c) State, userdata: ?*anyopaque) void;
+extern fn SDL_GetDefaultAssertionHandler() ?*const fn (?*const Data, ?*anyopaque) callconv(.c) State;
+extern fn SDL_GetAssertionHandler(userdata: ?*?*anyopaque) ?*const fn (?*const Data, ?*anyopaque) callconv(.c) State;
+extern fn SDL_GetAssertionReport() ?*const Data;
 extern fn SDL_ResetAssertionReport() void;
 extern fn SDL_TriggerBreakpoint() void;
 extern fn SDL_SetAssertionRetry(state: bool) void;

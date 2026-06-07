@@ -2,15 +2,15 @@
 // Lock-free atomic operations
 
 // Atomic types
-pub const SDL_SpinLock = c_int;
-pub const SDL_AtomicInt = extern struct {
+pub const SpinLock = c_int;
+pub const AtomicInt = extern struct {
     value: c_int,
 };
 
 // Atomic functions
-extern fn SDL_TryLockSpinlock(lock: ?*SDL_SpinLock) bool;
-extern fn SDL_LockSpinlock(lock: ?*SDL_SpinLock) void;
-extern fn SDL_UnlockSpinlock(lock: ?*SDL_SpinLock) void;
+extern fn SDL_TryLockSpinlock(lock: ?*SpinLock) bool;
+extern fn SDL_LockSpinlock(lock: ?*SpinLock) void;
+extern fn SDL_UnlockSpinlock(lock: ?*SpinLock) void;
 extern fn SDL_AtomicIncRef(atomic: ?*anyopaque) c_int;
 extern fn SDL_AtomicDecRef(atomic: ?*anyopaque) c_int;
 extern fn SDL_MemoryBarrierReleaseFunction() void;

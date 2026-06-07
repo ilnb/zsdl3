@@ -2,18 +2,14 @@
 // Timers, delays, timing functions
 
 const core = @import("core.zig");
-pub const Uint32 = core.Uint32;
-pub const SDL_Time = core.Sint64;
+pub const Time = core.Time;
 
 // Import types
 // Timer callback
-pub const SDL_TimerCallback = ?*const fn (?*anyopaque, SDL_TimerID, Uint32) callconv(.c) Uint32;
-pub const SDL_TimerID = Uint32;
+pub const TimerCallback = ?*const fn (?*anyopaque, TimerID, u32) callconv(.c) u32;
+pub const TimerID = u32;
 
-// Time types
-// SDL_Time is Sint64
-
-pub const SDL_DateTime = extern struct {
+pub const Date = extern struct {
     year: c_int,
     month: c_int,
     day: c_int,
@@ -25,31 +21,31 @@ pub const SDL_DateTime = extern struct {
     utc_offset: c_int,
 };
 
-pub const SDL_DateFormat = enum(c_int) {
-    SDL_DATE_FORMAT_YYYYMMDD,
-    SDL_DATE_FORMAT_DDMMYYYY,
-    SDL_DATE_FORMAT_MMDDYYYY,
+pub const DateFormat = enum(c_int) {
+    YYYYMMDD,
+    DDMMYYYY,
+    MMDDYYYY,
 };
 
-pub const SDL_TimeFormat = enum(c_int) {
-    SDL_TIME_FORMAT_24HR,
-    SDL_TIME_FORMAT_12HR,
+pub const TimeFormat = enum(c_int) {
+    FMT_24HR,
+    FMT_12HR,
 };
 
 // Time functions
-extern fn SDL_GetTicks() core.Uint64;
-extern fn SDL_GetTicksNS() core.Uint64;
-extern fn SDL_Delay(ms: core.Uint32) void;
-extern fn SDL_AddTimer(interval: Uint32, callback: SDL_TimerCallback, param: ?*anyopaque) SDL_TimerID;
-extern fn SDL_RemoveTimer(id: SDL_TimerID) bool;
-extern fn SDL_GetPerformanceCounter() core.Uint64;
-extern fn SDL_GetPerformanceFrequency() core.Uint64;
-extern fn SDL_GetCurrentTime(ticks: ?*core.SDL_Time) bool;
-extern fn SDL_TimeToDateTime(ticks: core.SDL_Time, dt: ?*SDL_DateTime, localTime: bool) bool;
-extern fn SDL_DateTimeToTime(dt: ?*const SDL_DateTime, ticks: ?*core.SDL_Time) bool;
-extern fn SDL_GetDateTimeLocalePreferences(dateFormat: ?*SDL_DateFormat, timeFormat: ?*SDL_TimeFormat) bool;
-extern fn SDL_TimeToWindows(ticks: core.SDL_Time, dwLowDateTime: ?*core.Uint32, dwHighDateTime: ?*core.Uint32) void;
-extern fn SDL_TimeFromWindows(dwLowDateTime: core.Uint32, dwHighDateTime: core.Uint32) core.SDL_Time;
+extern fn SDL_GetTicks() u64;
+extern fn SDL_GetTicksNS() u64;
+extern fn SDL_Delay(ms: u32) void;
+extern fn SDL_AddTimer(interval: u32, callback: TimerCallback, param: ?*anyopaque) TimerID;
+extern fn SDL_RemoveTimer(id: TimerID) bool;
+extern fn SDL_GetPerformanceCounter() u64;
+extern fn SDL_GetPerformanceFrequency() u64;
+extern fn SDL_GetCurrentTime(ticks: ?*Time) bool;
+extern fn SDL_TimeToDateTime(ticks: Time, dt: ?*Date, localTime: bool) bool;
+extern fn SDL_DateTimeToTime(dt: ?*const Date, ticks: ?*core.Time) bool;
+extern fn SDL_GetDateTimeLocalePreferences(dateFormat: ?*DateFormat, timeFormat: ?*TimeFormat) bool;
+extern fn SDL_TimeToWindows(ticks: core.Time, dwLowDateTime: ?*u32, dwHighDateTime: ?*u32) void;
+extern fn SDL_TimeFromWindows(dwLowDateTime: u32, dwHighDateTime: u32) core.Time;
 extern fn SDL_GetDaysInMonth(year: c_int, month: c_int) c_int;
 extern fn SDL_GetDayOfYear(year: c_int, month: c_int, day: c_int) c_int;
 extern fn SDL_GetDayOfWeek(year: c_int, month: c_int, day: c_int) c_int;
@@ -62,12 +58,12 @@ pub const addTimer = SDL_AddTimer;
 pub const removeTimer = SDL_RemoveTimer;
 pub const getPerformanceCounter = SDL_GetPerformanceCounter;
 pub const getPerformanceFrequency = SDL_GetPerformanceFrequency;
-pub const getCurrentTime = SDL_GetCurrentTime;
-pub const timeToDateTime = SDL_TimeToDateTime;
-pub const dateTimeToTime = SDL_DateTimeToTime;
-pub const getDateTimeLocalePreferences = SDL_GetDateTimeLocalePreferences;
-pub const timeToWindows = SDL_TimeToWindows;
-pub const timeFromWindows = SDL_TimeFromWindows;
+pub const getCurrent = SDL_GetCurrentTime;
+pub const toDate = SDL_TimeToDateTime;
+pub const fromDate = SDL_DateTimeToTime;
+pub const getDateLocalePreferences = SDL_GetDateTimeLocalePreferences;
+pub const toWindows = SDL_TimeToWindows;
+pub const fromWindows = SDL_TimeFromWindows;
 pub const getDaysInMonth = SDL_GetDaysInMonth;
 pub const getDayOfYear = SDL_GetDayOfYear;
 pub const getDayOfWeek = SDL_GetDayOfWeek;

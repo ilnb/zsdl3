@@ -5,7 +5,7 @@ const std = @import("std");
 const zsdl3 = @import("zsdl3");
 
 pub fn main() void {
-    if (!zsdl3.init(zsdl3.SDL_INIT_VIDEO)) {
+    if (!zsdl3.init(zsdl3.INIT_VIDEO)) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.log.err("Failed to initialize SDL: {s}", .{err});
         return;

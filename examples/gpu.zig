@@ -10,7 +10,7 @@ const zsdl3 = @import("zsdl3");
 pub fn main() void {
     std.log.info("SDL3 GPU API Test", .{});
 
-    if (!zsdl3.init(zsdl3.SDL_INIT_VIDEO)) {
+    if (!zsdl3.init(zsdl3.INIT_VIDEO)) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.log.err("Failed to initialize SDL: {s}", .{err});
         return;
@@ -26,17 +26,17 @@ pub fn main() void {
         }
     }
 
-    const props = zsdl3.createProperties();
-    defer zsdl3.destroyProperties(props);
+    const props = zsdl3.createProps();
+    defer zsdl3.destroyProps(props);
 
     // Use Metal on macOS, otherwise fallback to SPIRV (Vulkan)
-    if(std.mem.eql(u8, std.mem.sliceTo(zsdl3.getPlatform().?, 0), "macOS")) {
-    	_ = zsdl3.setBooleanProperty(props, zsdl3.SDL_PROP_GPU_DEVICE_CREATE_SHADERS_METALLIB_BOOLEAN, true);
+    if (std.mem.eql(u8, std.mem.sliceTo(zsdl3.getPlatform().?, 0), "macOS")) {
+        _ = zsdl3.setBooleanProp(props, zsdl3.PROP_GPU_DEVICE_CREATE_SHADERS_METALLIB_BOOLEAN, true);
     }
-    _ = zsdl3.setBooleanProperty(props, zsdl3.SDL_PROP_GPU_DEVICE_CREATE_SHADERS_SPIRV_BOOLEAN, true);
-    _ = zsdl3.setBooleanProperty(props, zsdl3.SDL_PROP_GPU_DEVICE_CREATE_DEBUGMODE_BOOLEAN, true);
+    _ = zsdl3.setBooleanProp(props, zsdl3.PROP_GPU_DEVICE_CREATE_SHADERS_SPIRV_BOOLEAN, true);
+    _ = zsdl3.setBooleanProp(props, zsdl3.PROP_GPU_DEVICE_CREATE_DEBUGMODE_BOOLEAN, true);
 
-    const device = zsdl3.createGPUDeviceWithProperties(props);
+    const device = zsdl3.createGPUDeviceWithProps(props);
     if (device == null) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.log.err("Failed to create GPU device: {s}", .{err});
@@ -47,28 +47,28 @@ pub fn main() void {
 
     std.log.info("GPU device created successfully!", .{});
 
-    const device_props = zsdl3.getGPUDeviceProperties(device);
+    const device_props = zsdl3.getGPUDeviceProps(device);
     if (device_props != 0) {
-        if (zsdl3.getStringProperty(device_props, zsdl3.SDL_PROP_GPU_DEVICE_NAME_STRING, null)) |name| {
+        if (zsdl3.getStringProp(device_props, zsdl3.PROP_GPU_DEVICE_NAME_STRING, null)) |name| {
             std.log.info("GPU Device: {s}", .{name});
         }
-        if (zsdl3.getStringProperty(device_props, zsdl3.SDL_PROP_GPU_DEVICE_DRIVER_NAME_STRING, null)) |driver| {
+        if (zsdl3.getStringProp(device_props, zsdl3.PROP_GPU_DEVICE_DRIVER_NAME_STRING, null)) |driver| {
             std.log.info("GPU Driver: {s}", .{driver});
         }
-        if (zsdl3.getStringProperty(device_props, zsdl3.SDL_PROP_GPU_DEVICE_DRIVER_VERSION_STRING, null)) |version| {
+        if (zsdl3.getStringProp(device_props, zsdl3.PROP_GPU_DEVICE_DRIVER_VERSION_STRING, null)) |version| {
             std.log.info("Driver Version: {s}", .{version});
         }
     }
 
     const supported_formats = zsdl3.getGPUShaderFormats(device);
     std.log.info("Supported shader formats:", .{});
-    if (supported_formats & zsdl3.SDL_GPU_SHADERFORMAT_SPIRV != 0) std.log.info("  - SPIRV (Vulkan)", .{});
-    if (supported_formats & zsdl3.SDL_GPU_SHADERFORMAT_DXIL != 0) std.log.info("  - DXIL (D3D12)", .{});
-    if (supported_formats & zsdl3.SDL_GPU_SHADERFORMAT_DXBC != 0) std.log.info("  - DXBC (D3D12)", .{});
-    if (supported_formats & zsdl3.SDL_GPU_SHADERFORMAT_MSL != 0) std.log.info("  - MSL (Metal)", .{});
-    if (supported_formats & zsdl3.SDL_GPU_SHADERFORMAT_METALLIB != 0) std.log.info("  - MetalLib (Metal)", .{});
+    if (supported_formats & zsdl3.GPU_SHADERFORMAT_SPIRV != 0) std.log.info("  - SPIRV (Vulkan)", .{});
+    if (supported_formats & zsdl3.GPU_SHADERFORMAT_DXIL != 0) std.log.info("  - DXIL (D3D12)", .{});
+    if (supported_formats & zsdl3.GPU_SHADERFORMAT_DXBC != 0) std.log.info("  - DXBC (D3D12)", .{});
+    if (supported_formats & zsdl3.GPU_SHADERFORMAT_MSL != 0) std.log.info("  - MSL (Metal)", .{});
+    if (supported_formats & zsdl3.GPU_SHADERFORMAT_METALLIB != 0) std.log.info("  - MetalLib (Metal)", .{});
 
-    const window = zsdl3.createWindow("GPU Test", 800, 600, zsdl3.SDL_WINDOW_RESIZABLE);
+    const window = zsdl3.createWindow("GPU Test", 800, 600, zsdl3.WINDOW_RESIZABLE);
     if (window == null) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.log.err("Failed to create window: {s}", .{err});
@@ -88,8 +88,8 @@ pub fn main() void {
     const swapchain_format = zsdl3.getGPUSwapchainTextureFormat(device, window);
     std.log.info("Swapchain format: {d}", .{swapchain_format});
 
-    const buffer_create_info = zsdl3.SDL_GPUBufferCreateInfo{
-        .usage = zsdl3.SDL_GPU_BUFFERUSAGE_VERTEX | zsdl3.SDL_GPU_BUFFERUSAGE_INDEX,
+    const buffer_create_info = zsdl3.GPUBufferCreateInfo{
+        .usage = zsdl3.GPU_BUFFERUSAGE_VERTEX | zsdl3.GPU_BUFFERUSAGE_INDEX,
         .size = @sizeOf(u16) * 36,
         .props = 0,
     };
@@ -103,15 +103,15 @@ pub fn main() void {
 
     std.log.info("GPU buffer created successfully", .{});
 
-    const texture_create_info = zsdl3.SDL_GPUTextureCreateInfo{
-        .type = zsdl3.SDL_GPU_TEXTURETYPE_2D,
-        .format = zsdl3.gpu.SDL_GPUTextureFormat.SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-        .usage = zsdl3.SDL_GPU_TEXTUREUSAGE_SAMPLER,
+    const texture_create_info = zsdl3.GPUTextureCreateInfo{
+        .type = .TYPE_2D,
+        .format = .R8G8B8A8_UNORM,
+        .usage = zsdl3.GPU_TEXTUREUSAGE_SAMPLER,
         .width = 256,
         .height = 256,
         .layer_count_or_depth = 1,
         .num_levels = 1,
-        .sample_count = zsdl3.SDL_GPU_SAMPLECOUNT_1,
+        .sample_count = .COUNT_1,
         .props = 0,
     };
     const texture = zsdl3.createGPUTexture(device, &texture_create_info);
@@ -124,16 +124,16 @@ pub fn main() void {
 
     std.log.info("GPU texture created successfully", .{});
 
-    const sampler_create_info = zsdl3.SDL_GPUSamplerCreateInfo{
-        .min_filter = zsdl3.SDL_GPU_FILTER_NEAREST,
-        .mag_filter = zsdl3.SDL_GPU_FILTER_LINEAR,
-        .mipmap_mode = zsdl3.SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
-        .address_mode_u = zsdl3.SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-        .address_mode_v = zsdl3.SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-        .address_mode_w = zsdl3.SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    const sampler_create_info = zsdl3.GPUSamplerCreateInfo{
+        .min_filter = .NEAREST,
+        .mag_filter = .LINEAR,
+        .mipmap_mode = .LINEAR,
+        .address_mode_u = .CLAMP_TO_EDGE,
+        .address_mode_v = .CLAMP_TO_EDGE,
+        .address_mode_w = .CLAMP_TO_EDGE,
         .mip_lod_bias = 0.0,
         .max_anisotropy = 0.0,
-        .compare_op = zsdl3.SDL_GPU_COMPAREOP_NEVER,
+        .compare_op = .NEVER,
         .min_lod = 0.0,
         .max_lod = 0.0,
         .enable_anisotropy = false,
@@ -151,8 +151,8 @@ pub fn main() void {
 
     std.log.info("GPU sampler created successfully", .{});
 
-    const transfer_create_info = zsdl3.SDL_GPUTransferBufferCreateInfo{
-        .usage = zsdl3.SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+    const transfer_create_info = zsdl3.GPUTransferBufferCreateInfo{
+        .usage = .UPLOAD,
         .size = 256 * 256 * 4,
         .props = 0,
     };
@@ -173,7 +173,7 @@ pub fn main() void {
         return;
     }
 
-    var swapchain_texture: ?*zsdl3.SDL_GPUTexture = undefined;
+    var swapchain_texture: ?*zsdl3.GPUTexture = undefined;
     var swapchain_w: u32 = undefined;
     var swapchain_h: u32 = undefined;
 

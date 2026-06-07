@@ -9,14 +9,14 @@ const zsdl3 = @import("zsdl3");
 
 pub fn main() void {
     // Initialize SDL with video and audio
-    if (zsdl3.init(zsdl3.SDL_INIT_VIDEO | zsdl3.SDL_INIT_AUDIO)) {
+    if (zsdl3.init(zsdl3.INIT_VIDEO | zsdl3.INIT_AUDIO)) {
         defer zsdl3.quit();
 
         // Log initialization
-        zsdl3.logInfo(zsdl3.SDL_LOG_CATEGORY_APPLICATION, "SDL initialized successfully");
+        zsdl3.logInfo(zsdl3.LOG_CATEGORY_APPLICATION, "SDL initialized successfully");
 
         // Create window
-        const window = zsdl3.createWindow("ZSDL3 Enhanced Example", 800, 600, zsdl3.SDL_WINDOW_RESIZABLE);
+        const window = zsdl3.createWindow("ZSDL3 Enhanced Example", 800, 600, zsdl3.WINDOW_RESIZABLE);
         if (window) |win| {
             defer zsdl3.destroyWindow(win);
 
@@ -46,21 +46,21 @@ pub fn main() void {
                     _ = zsdl3.getWindowSize(win, &window_w, &window_h);
 
                     // Handle events
-                    var event: zsdl3.SDL_Event = undefined;
+                    var event: zsdl3.Event = undefined;
                     while (zsdl3.pollEvent(&event)) {
                         switch (event.type) {
-                            zsdl3.SDL_EVENT_QUIT => running = false,
-                            zsdl3.SDL_EVENT_KEY_DOWN => {
+                            zsdl3.EVENT_QUIT => running = false,
+                            zsdl3.EVENT_KEY_DOWN => {
                                 const scancode = event.key.scancode;
-                                if (scancode == zsdl3.SDL_SCANCODE_ESCAPE) {
+                                if (scancode == zsdl3.SCANCODE_ESCAPE) {
                                     running = false;
-                                } else if (scancode == zsdl3.SDL_SCANCODE_LEFT) {
+                                } else if (scancode == zsdl3.SCANCODE_LEFT) {
                                     rect_x -= 10;
-                                } else if (scancode == zsdl3.SDL_SCANCODE_RIGHT) {
+                                } else if (scancode == zsdl3.SCANCODE_RIGHT) {
                                     rect_x += 10;
-                                } else if (scancode == zsdl3.SDL_SCANCODE_UP) {
+                                } else if (scancode == zsdl3.SCANCODE_UP) {
                                     rect_y -= 10;
-                                } else if (scancode == zsdl3.SDL_SCANCODE_DOWN) {
+                                } else if (scancode == zsdl3.SCANCODE_DOWN) {
                                     rect_y += 10;
                                 }
                             },
@@ -74,7 +74,7 @@ pub fn main() void {
 
                     // Draw movable rectangle
                     _ = zsdl3.setRenderDrawColor(rend, 255, 255, 0, 255);
-                    const rect = zsdl3.SDL_FRect{ .x = rect_x, .y = rect_y, .w = 200, .h = 150 };
+                    const rect = zsdl3.FRect{ .x = rect_x, .y = rect_y, .w = 200, .h = 150 };
                     _ = zsdl3.renderFillRect(rend, &rect);
 
                     // No borders - clean rendering
@@ -91,7 +91,7 @@ pub fn main() void {
                 const end_time = zsdl3.getTicks();
                 const fps = @as(f32, @floatFromInt(frame_count)) / (@as(f32, @floatFromInt(end_time - start_time)) / 1000.0);
                 std.debug.print("Game loop ended. Average FPS: {d:.2}\n", .{fps});
-                zsdl3.logInfo(zsdl3.SDL_LOG_CATEGORY_APPLICATION, "Game loop ended");
+                zsdl3.logInfo(zsdl3.LOG_CATEGORY_APPLICATION, "Game loop ended");
 
                 // Test some subsystems
                 const platform_name = zsdl3.getPlatform();

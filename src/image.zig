@@ -1,105 +1,106 @@
 // SDL3_image Bindings
 // Image loading library
 
+const fs = @import("fs.zig");
 const surface = @import("surface.zig");
 const render = @import("render.zig");
 
 // Import types
-pub const SDL_Surface = surface.SDL_Surface;
-pub const SDL_IOStream = surface.SDL_IOStream;
-pub const SDL_Texture = render.SDL_Texture;
-pub const SDL_Renderer = render.SDL_Renderer;
+const Surface = surface.Surface;
+const IOStream = fs.IOStream;
+const Texture = render.Texture;
+const Renderer = render.Renderer;
 
 // Version constants
-pub const SDL_IMAGE_MAJOR_VERSION = 3;
-pub const SDL_IMAGE_MINOR_VERSION = 2;
-pub const SDL_IMAGE_MICRO_VERSION = 6;
+pub const MAJOR_VERSION = 3;
+pub const MINOR_VERSION = 2;
+pub const MICRO_VERSION = 6;
 
 // Animation struct
-pub const IMG_Animation = extern struct {
+pub const Animation = extern struct {
     w: c_int,
     h: c_int,
     count: c_int,
-    frames: ?[*]?*SDL_Surface,
+    frames: ?[*]?*Surface,
     delays: ?[*]c_int,
 };
 
-// Version function
+// Version fntion
 extern fn IMG_Version() c_int;
 
 // Loading functions - surface
-extern fn IMG_LoadTyped_IO(src: ?*SDL_IOStream, closeio: bool, type: ?[*:0]const u8) ?*SDL_Surface;
-extern fn IMG_Load(file: ?[*:0]const u8) ?*SDL_Surface;
-extern fn IMG_Load_IO(src: ?*SDL_IOStream, closeio: bool) ?*SDL_Surface;
+extern fn IMG_LoadTyped_IO(src: ?*IOStream, closeio: bool, type: ?[*:0]const u8) ?*Surface;
+extern fn IMG_Load(file: ?[*:0]const u8) ?*Surface;
+extern fn IMG_Load_IO(src: ?*IOStream, closeio: bool) ?*Surface;
 
 // Loading functions - texture
-extern fn IMG_LoadTexture(renderer: ?*SDL_Renderer, file: ?[*:0]const u8) ?*SDL_Texture;
-extern fn IMG_LoadTexture_IO(renderer: ?*SDL_Renderer, src: ?*SDL_IOStream, closeio: bool) ?*SDL_Texture;
-extern fn IMG_LoadTextureTyped_IO(renderer: ?*SDL_Renderer, src: ?*SDL_IOStream, closeio: bool, type: ?[*:0]const u8) ?*SDL_Texture;
+extern fn IMG_LoadTexture(renderer: ?*Renderer, file: ?[*:0]const u8) ?*Texture;
+extern fn IMG_LoadTexture_IO(renderer: ?*Renderer, src: ?*IOStream, closeio: bool) ?*Texture;
+extern fn IMG_LoadTextureTyped_IO(renderer: ?*Renderer, src: ?*IOStream, closeio: bool, type: ?[*:0]const u8) ?*Texture;
 
 // Image detection functions
-extern fn IMG_isAVIF(src: ?*SDL_IOStream) bool;
-extern fn IMG_isICO(src: ?*SDL_IOStream) bool;
-extern fn IMG_isCUR(src: ?*SDL_IOStream) bool;
-extern fn IMG_isBMP(src: ?*SDL_IOStream) bool;
-extern fn IMG_isGIF(src: ?*SDL_IOStream) bool;
-extern fn IMG_isJPG(src: ?*SDL_IOStream) bool;
-extern fn IMG_isJXL(src: ?*SDL_IOStream) bool;
-extern fn IMG_isLBM(src: ?*SDL_IOStream) bool;
-extern fn IMG_isPCX(src: ?*SDL_IOStream) bool;
-extern fn IMG_isPNG(src: ?*SDL_IOStream) bool;
-extern fn IMG_isPNM(src: ?*SDL_IOStream) bool;
-extern fn IMG_isSVG(src: ?*SDL_IOStream) bool;
-extern fn IMG_isQOI(src: ?*SDL_IOStream) bool;
-extern fn IMG_isTIF(src: ?*SDL_IOStream) bool;
-extern fn IMG_isXCF(src: ?*SDL_IOStream) bool;
-extern fn IMG_isXPM(src: ?*SDL_IOStream) bool;
-extern fn IMG_isXV(src: ?*SDL_IOStream) bool;
-extern fn IMG_isWEBP(src: ?*SDL_IOStream) bool;
+extern fn IMG_isAVIF(src: ?*IOStream) bool;
+extern fn IMG_isICO(src: ?*IOStream) bool;
+extern fn IMG_isCUR(src: ?*IOStream) bool;
+extern fn IMG_isBMP(src: ?*IOStream) bool;
+extern fn IMG_isGIF(src: ?*IOStream) bool;
+extern fn IMG_isJPG(src: ?*IOStream) bool;
+extern fn IMG_isJXL(src: ?*IOStream) bool;
+extern fn IMG_isLBM(src: ?*IOStream) bool;
+extern fn IMG_isPCX(src: ?*IOStream) bool;
+extern fn IMG_isPNG(src: ?*IOStream) bool;
+extern fn IMG_isPNM(src: ?*IOStream) bool;
+extern fn IMG_isSVG(src: ?*IOStream) bool;
+extern fn IMG_isQOI(src: ?*IOStream) bool;
+extern fn IMG_isTIF(src: ?*IOStream) bool;
+extern fn IMG_isXCF(src: ?*IOStream) bool;
+extern fn IMG_isXPM(src: ?*IOStream) bool;
+extern fn IMG_isXV(src: ?*IOStream) bool;
+extern fn IMG_isWEBP(src: ?*IOStream) bool;
 
 // Individual format loaders
-extern fn IMG_LoadAVIF_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadICO_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadCUR_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadBMP_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadGIF_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadJPG_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadJXL_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadLBM_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadPCX_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadPNG_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadPNM_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadSVG_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadQOI_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadTGA_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadTIF_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadXCF_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadXPM_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadXV_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
-extern fn IMG_LoadWEBP_IO(src: ?*SDL_IOStream) ?*SDL_Surface;
+extern fn IMG_LoadAVIF_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadICO_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadCUR_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadBMP_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadGIF_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadJPG_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadJXL_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadLBM_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadPCX_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadPNG_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadPNM_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadSVG_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadQOI_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadTGA_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadTIF_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadXCF_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadXPM_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadXV_IO(src: ?*IOStream) ?*Surface;
+extern fn IMG_LoadWEBP_IO(src: ?*IOStream) ?*Surface;
 
 // SVG loading
-extern fn IMG_LoadSizedSVG_IO(src: ?*SDL_IOStream, width: c_int, height: c_int) ?*SDL_Surface;
+extern fn IMG_LoadSizedSVG_IO(src: ?*IOStream, width: c_int, height: c_int) ?*Surface;
 
 // XPM from array
-extern fn IMG_ReadXPMFromArray(xpm: ?[*]?[*:0]u8) ?*SDL_Surface;
-extern fn IMG_ReadXPMFromArrayToRGB888(xpm: ?[*]?[*:0]u8) ?*SDL_Surface;
+extern fn IMG_ReadXPMFromArray(xpm: ?[*]?[*:0]u8) ?*Surface;
+extern fn IMG_ReadXPMFromArrayToRGB888(xpm: ?[*]?[*:0]u8) ?*Surface;
 
 // Save functions
-extern fn IMG_SaveAVIF(surface: ?*SDL_Surface, file: ?[*:0]const u8, quality: c_int) bool;
-extern fn IMG_SaveAVIF_IO(surface: ?*SDL_Surface, dst: ?*SDL_IOStream, closeio: bool, quality: c_int) bool;
-extern fn IMG_SavePNG(surface: ?*SDL_Surface, file: ?[*:0]const u8) bool;
-extern fn IMG_SavePNG_IO(surface: ?*SDL_Surface, dst: ?*SDL_IOStream, closeio: bool) bool;
-extern fn IMG_SaveJPG(surface: ?*SDL_Surface, file: ?[*:0]const u8, quality: c_int) bool;
-extern fn IMG_SaveJPG_IO(surface: ?*SDL_Surface, dst: ?*SDL_IOStream, closeio: bool, quality: c_int) bool;
+extern fn IMG_SaveAVIF(surface: ?*Surface, file: ?[*:0]const u8, quality: c_int) bool;
+extern fn IMG_SaveAVIF_IO(surface: ?*Surface, dst: ?*IOStream, closeio: bool, quality: c_int) bool;
+extern fn IMG_SavePNG(surface: ?*Surface, file: ?[*:0]const u8) bool;
+extern fn IMG_SavePNG_IO(surface: ?*Surface, dst: ?*IOStream, closeio: bool) bool;
+extern fn IMG_SaveJPG(surface: ?*Surface, file: ?[*:0]const u8, quality: c_int) bool;
+extern fn IMG_SaveJPG_IO(surface: ?*Surface, dst: ?*IOStream, closeio: bool, quality: c_int) bool;
 
 // Animation functions
-extern fn IMG_LoadAnimation(file: ?[*:0]const u8) ?*IMG_Animation;
-extern fn IMG_LoadAnimation_IO(src: ?*SDL_IOStream, closeio: bool) ?*IMG_Animation;
-extern fn IMG_LoadAnimationTyped_IO(src: ?*SDL_IOStream, closeio: bool, type: ?[*:0]const u8) ?*IMG_Animation;
-extern fn IMG_FreeAnimation(anim: ?*IMG_Animation) void;
-extern fn IMG_LoadGIFAnimation_IO(src: ?*SDL_IOStream) ?*IMG_Animation;
-extern fn IMG_LoadWEBPAnimation_IO(src: ?*SDL_IOStream) ?*IMG_Animation;
+extern fn IMG_LoadAnimation(file: ?[*:0]const u8) ?*Animation;
+extern fn IMG_LoadAnimation_IO(src: ?*IOStream, closeio: bool) ?*Animation;
+extern fn IMG_LoadAnimationTyped_IO(src: ?*IOStream, closeio: bool, type: ?[*:0]const u8) ?*Animation;
+extern fn IMG_FreeAnimation(anim: ?*Animation) void;
+extern fn IMG_LoadGIFAnimation_IO(src: ?*IOStream) ?*Animation;
+extern fn IMG_LoadWEBPAnimation_IO(src: ?*IOStream) ?*Animation;
 
 // Public API
 pub const version = IMG_Version;

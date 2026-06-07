@@ -2,216 +2,598 @@
 // Complete event handling and polling
 
 const core = @import("core.zig");
-pub const SDL_EventType = core.SDL_EventType;
-pub const SDL_CommonEvent = core.SDL_CommonEvent;
-pub const SDL_QuitEvent = core.SDL_QuitEvent;
-pub const SDL_KeyboardEvent = core.SDL_KeyboardEvent;
-pub const SDL_MouseMotionEvent = core.SDL_MouseMotionEvent;
-pub const SDL_WindowID = core.SDL_WindowID;
-pub const SDL_Event = core.SDL_Event;
-// Re-export text input event structs from core (they're defined there for the union)
-pub const SDL_TextEditingEvent = core.SDL_TextEditingEvent;
-pub const SDL_TextEditingCandidatesEvent = core.SDL_TextEditingCandidatesEvent;
-pub const SDL_TextInputEvent = core.SDL_TextInputEvent;
+const sensor = @import("sensor.zig");
+pub const EventType = core.EventType;
+const WindowID = core.WindowID;
+const DisplayID = core.DisplayID;
+const KeyboardID = core.KeyboardID;
+const JoystickID = core.JoystickID;
+const PenID = core.PenID;
 const input = @import("input.zig");
 const pen = @import("pen.zig");
 const touch = @import("touch.zig");
 const power = @import("power.zig");
-pub const SDL_TouchID = touch.SDL_TouchID;
-pub const SDL_Finger = touch.SDL_Finger;
-pub const SDL_FingerID = touch.SDL_FingerID;
+const camera = @import("camera.zig");
+const Finger = touch.Finger;
+const FingerID = touch.FingerID;
 const video = @import("video.zig");
 
 // Import types
 // === Complete SDL3 Event Type Constants ===
 // Application events
-pub const SDL_EVENT_FIRST = 0;
-pub const SDL_EVENT_QUIT = 0x100;
-pub const SDL_EVENT_TERMINATING = 0x101;
-pub const SDL_EVENT_LOW_MEMORY = 0x102;
-pub const SDL_EVENT_WILL_ENTER_BACKGROUND = 0x103;
-pub const SDL_EVENT_DID_ENTER_BACKGROUND = 0x104;
-pub const SDL_EVENT_WILL_ENTER_FOREGROUND = 0x105;
-pub const SDL_EVENT_DID_ENTER_FOREGROUND = 0x106;
-pub const SDL_EVENT_LOCALE_CHANGED = 0x107;
-pub const SDL_EVENT_SYSTEM_THEME_CHANGED = 0x108;
+pub const FIRST = 0;
+pub const QUIT = 0x100;
+pub const TERMINATING = 0x101;
+pub const LOW_MEMORY = 0x102;
+pub const WILL_ENTER_BACKGROUND = 0x103;
+pub const DID_ENTER_BACKGROUND = 0x104;
+pub const WILL_ENTER_FOREGROUND = 0x105;
+pub const DID_ENTER_FOREGROUND = 0x106;
+pub const LOCALE_CHANGED = 0x107;
+pub const SYSTEM_THEME_CHANGED = 0x108;
 
 // Display events
-pub const SDL_EVENT_DISPLAY_ORIENTATION = 0x151;
-pub const SDL_EVENT_DISPLAY_ADDED = 0x152;
-pub const SDL_EVENT_DISPLAY_REMOVED = 0x153;
-pub const SDL_EVENT_DISPLAY_MOVED = 0x154;
-pub const SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED = 0x155;
-pub const SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED = 0x156;
-pub const SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED = 0x157;
-pub const SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED = 0x158;
-pub const SDL_EVENT_DISPLAY_FIRST = SDL_EVENT_DISPLAY_ORIENTATION;
-pub const SDL_EVENT_DISPLAY_LAST = SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED;
+pub const DISPLAY_ORIENTATION = 0x151;
+pub const DISPLAY_ADDED = 0x152;
+pub const DISPLAY_REMOVED = 0x153;
+pub const DISPLAY_MOVED = 0x154;
+pub const DISPLAY_DESKTOP_MODE_CHANGED = 0x155;
+pub const DISPLAY_CURRENT_MODE_CHANGED = 0x156;
+pub const DISPLAY_CONTENT_SCALE_CHANGED = 0x157;
+pub const DISPLAY_USABLE_BOUNDS_CHANGED = 0x158;
+pub const DISPLAY_FIRST = DISPLAY_ORIENTATION;
+pub const DISPLAY_LAST = DISPLAY_USABLE_BOUNDS_CHANGED;
 
 // Window events
-pub const SDL_EVENT_WINDOW_SHOWN = 0x202;
-pub const SDL_EVENT_WINDOW_HIDDEN = 0x203;
-pub const SDL_EVENT_WINDOW_EXPOSED = 0x204;
-pub const SDL_EVENT_WINDOW_MOVED = 0x205;
-pub const SDL_EVENT_WINDOW_RESIZED = 0x206;
-pub const SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED = 0x207;
-pub const SDL_EVENT_WINDOW_METAL_VIEW_RESIZED = 0x208;
-pub const SDL_EVENT_WINDOW_MINIMIZED = 0x209;
-pub const SDL_EVENT_WINDOW_MAXIMIZED = 0x20A;
-pub const SDL_EVENT_WINDOW_RESTORED = 0x20B;
-pub const SDL_EVENT_WINDOW_MOUSE_ENTER = 0x20C;
-pub const SDL_EVENT_WINDOW_MOUSE_LEAVE = 0x20D;
-pub const SDL_EVENT_WINDOW_FOCUS_GAINED = 0x20E;
-pub const SDL_EVENT_WINDOW_FOCUS_LOST = 0x20F;
-pub const SDL_EVENT_WINDOW_CLOSE_REQUESTED = 0x210;
-pub const SDL_EVENT_WINDOW_HIT_TEST = 0x211;
-pub const SDL_EVENT_WINDOW_ICCPROF_CHANGED = 0x212;
-pub const SDL_EVENT_WINDOW_DISPLAY_CHANGED = 0x213;
-pub const SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED = 0x214;
-pub const SDL_EVENT_WINDOW_SAFE_AREA_CHANGED = 0x215;
-pub const SDL_EVENT_WINDOW_OCCLUDED = 0x216;
-pub const SDL_EVENT_WINDOW_ENTER_FULLSCREEN = 0x217;
-pub const SDL_EVENT_WINDOW_LEAVE_FULLSCREEN = 0x218;
-pub const SDL_EVENT_WINDOW_DESTROYED = 0x219;
-pub const SDL_EVENT_WINDOW_HDR_STATE_CHANGED = 0x21A;
-pub const SDL_EVENT_WINDOW_FIRST = SDL_EVENT_WINDOW_SHOWN;
-pub const SDL_EVENT_WINDOW_LAST = SDL_EVENT_WINDOW_HDR_STATE_CHANGED;
+pub const WINDOW_SHOWN = 0x202;
+pub const WINDOW_HIDDEN = 0x203;
+pub const WINDOW_EXPOSED = 0x204;
+pub const WINDOW_MOVED = 0x205;
+pub const WINDOW_RESIZED = 0x206;
+pub const WINDOW_PIXEL_SIZE_CHANGED = 0x207;
+pub const WINDOW_METAL_VIEW_RESIZED = 0x208;
+pub const WINDOW_MINIMIZED = 0x209;
+pub const WINDOW_MAXIMIZED = 0x20A;
+pub const WINDOW_RESTORED = 0x20B;
+pub const WINDOW_MOUSE_ENTER = 0x20C;
+pub const WINDOW_MOUSE_LEAVE = 0x20D;
+pub const WINDOW_FOCUS_GAINED = 0x20E;
+pub const WINDOW_FOCUS_LOST = 0x20F;
+pub const WINDOW_CLOSE_REQUESTED = 0x210;
+pub const WINDOW_HIT_TEST = 0x211;
+pub const WINDOW_ICCPROF_CHANGED = 0x212;
+pub const WINDOW_DISPLAY_CHANGED = 0x213;
+pub const WINDOW_DISPLAY_SCALE_CHANGED = 0x214;
+pub const WINDOW_SAFE_AREA_CHANGED = 0x215;
+pub const WINDOW_OCCLUDED = 0x216;
+pub const WINDOW_ENTER_FULLSCREEN = 0x217;
+pub const WINDOW_LEAVE_FULLSCREEN = 0x218;
+pub const WINDOW_DESTROYED = 0x219;
+pub const WINDOW_HDR_STATE_CHANGED = 0x21A;
+pub const WINDOW_FIRST = WINDOW_SHOWN;
+pub const WINDOW_LAST = WINDOW_HDR_STATE_CHANGED;
 
 // Keyboard events
-pub const SDL_EVENT_KEY_DOWN = 0x300;
-pub const SDL_EVENT_KEY_UP = 0x301;
-pub const SDL_EVENT_TEXT_EDITING = 0x302;
-pub const SDL_EVENT_TEXT_INPUT = 0x303;
-pub const SDL_EVENT_KEYMAP_CHANGED = 0x304;
-pub const SDL_EVENT_KEYBOARD_ADDED = 0x305;
-pub const SDL_EVENT_KEYBOARD_REMOVED = 0x306;
-pub const SDL_EVENT_TEXT_EDITING_CANDIDATES = 0x307;
-pub const SDL_EVENT_SCREEN_KEYBOARD_SHOWN = 0x308;
-pub const SDL_EVENT_SCREEN_KEYBOARD_HIDDEN = 0x309;
+pub const KEY_DOWN = 0x300;
+pub const KEY_UP = 0x301;
+pub const TEXT_EDITING = 0x302;
+pub const TEXT_INPUT = 0x303;
+pub const KEYMAP_CHANGED = 0x304;
+pub const KEYBOARD_ADDED = 0x305;
+pub const KEYBOARD_REMOVED = 0x306;
+pub const TEXT_EDITING_CANDIDATES = 0x307;
+pub const SCREEN_KEYBOARD_SHOWN = 0x308;
+pub const SCREEN_KEYBOARD_HIDDEN = 0x309;
 
 // Mouse events
-pub const SDL_EVENT_MOUSE_MOTION = 0x400;
-pub const SDL_EVENT_MOUSE_BUTTON_DOWN = 0x401;
-pub const SDL_EVENT_MOUSE_BUTTON_UP = 0x402;
-pub const SDL_EVENT_MOUSE_WHEEL = 0x403;
-pub const SDL_EVENT_MOUSE_ADDED = 0x404;
-pub const SDL_EVENT_MOUSE_REMOVED = 0x405;
+pub const MOUSE_MOTION = 0x400;
+pub const MOUSE_BUTTON_DOWN = 0x401;
+pub const MOUSE_BUTTON_UP = 0x402;
+pub const MOUSE_WHEEL = 0x403;
+pub const MOUSE_ADDED = 0x404;
+pub const MOUSE_REMOVED = 0x405;
 
 // Joystick events
-pub const SDL_EVENT_JOYSTICK_AXIS_MOTION = 0x600;
-pub const SDL_EVENT_JOYSTICK_BALL_MOTION = 0x601;
-pub const SDL_EVENT_JOYSTICK_HAT_MOTION = 0x602;
-pub const SDL_EVENT_JOYSTICK_BUTTON_DOWN = 0x603;
-pub const SDL_EVENT_JOYSTICK_BUTTON_UP = 0x604;
-pub const SDL_EVENT_JOYSTICK_ADDED = 0x605;
-pub const SDL_EVENT_JOYSTICK_REMOVED = 0x606;
-pub const SDL_EVENT_JOYSTICK_BATTERY_UPDATED = 0x607;
-pub const SDL_EVENT_JOYSTICK_UPDATE_COMPLETE = 0x608;
+pub const JOYSTICK_AXIS_MOTION = 0x600;
+pub const JOYSTICK_BALL_MOTION = 0x601;
+pub const JOYSTICK_HAT_MOTION = 0x602;
+pub const JOYSTICK_BUTTON_DOWN = 0x603;
+pub const JOYSTICK_BUTTON_UP = 0x604;
+pub const JOYSTICK_ADDED = 0x605;
+pub const JOYSTICK_REMOVED = 0x606;
+pub const JOYSTICK_BATTERY_UPDATED = 0x607;
+pub const JOYSTICK_UPDATE_COMPLETE = 0x608;
 
 // Gamepad events
-pub const SDL_EVENT_GAMEPAD_AXIS_MOTION = 0x650;
-pub const SDL_EVENT_GAMEPAD_BUTTON_DOWN = 0x651;
-pub const SDL_EVENT_GAMEPAD_BUTTON_UP = 0x652;
-pub const SDL_EVENT_GAMEPAD_ADDED = 0x653;
-pub const SDL_EVENT_GAMEPAD_REMOVED = 0x654;
-pub const SDL_EVENT_GAMEPAD_REMAPPED = 0x655;
-pub const SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN = 0x656;
-pub const SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION = 0x657;
-pub const SDL_EVENT_GAMEPAD_TOUCHPAD_UP = 0x658;
-pub const SDL_EVENT_GAMEPAD_SENSOR_UPDATE = 0x659;
-pub const SDL_EVENT_GAMEPAD_UPDATE_COMPLETE = 0x65A;
-pub const SDL_EVENT_GAMEPAD_STEAM_HANDLE_UPDATED = 0x65B;
+pub const GAMEPAD_AXIS_MOTION = 0x650;
+pub const GAMEPAD_BUTTON_DOWN = 0x651;
+pub const GAMEPAD_BUTTON_UP = 0x652;
+pub const GAMEPAD_ADDED = 0x653;
+pub const GAMEPAD_REMOVED = 0x654;
+pub const GAMEPAD_REMAPPED = 0x655;
+pub const GAMEPAD_TOUCHPAD_DOWN = 0x656;
+pub const GAMEPAD_TOUCHPAD_MOTION = 0x657;
+pub const GAMEPAD_TOUCHPAD_UP = 0x658;
+pub const GAMEPAD_SENSOR_UPDATE = 0x659;
+pub const GAMEPAD_UPDATE_COMPLETE = 0x65A;
+pub const GAMEPAD_STEAM_HANDLE_UPDATED = 0x65B;
 
 // Touch events
-pub const SDL_EVENT_FINGER_DOWN = 0x700;
-pub const SDL_EVENT_FINGER_UP = 0x701;
-pub const SDL_EVENT_FINGER_MOTION = 0x702;
-pub const SDL_EVENT_FINGER_CANCELED = 0x703;
+pub const FINGER_DOWN = 0x700;
+pub const FINGER_UP = 0x701;
+pub const FINGER_MOTION = 0x702;
+pub const FINGER_CANCELED = 0x703;
 
 // Pinch events
-pub const SDL_EVENT_PINCH_BEGIN = 0x710;
-pub const SDL_EVENT_PINCH_UPDATE = 0x711;
-pub const SDL_EVENT_PINCH_END = 0x712;
+pub const PINCH_BEGIN = 0x710;
+pub const PINCH_UPDATE = 0x711;
+pub const PINCH_END = 0x712;
 
 // Clipboard events
-pub const SDL_EVENT_CLIPBOARD_UPDATE = 0x900;
+pub const CLIPBOARD_UPDATE = 0x900;
 
 // Drag and drop events
-pub const SDL_EVENT_DROP_FILE = 0x1000;
-pub const SDL_EVENT_DROP_TEXT = 0x1001;
-pub const SDL_EVENT_DROP_BEGIN = 0x1002;
-pub const SDL_EVENT_DROP_COMPLETE = 0x1003;
-pub const SDL_EVENT_DROP_POSITION = 0x1004;
+pub const DROP_FILE = 0x1000;
+pub const DROP_TEXT = 0x1001;
+pub const DROP_BEGIN = 0x1002;
+pub const DROP_COMPLETE = 0x1003;
+pub const DROP_POSITION = 0x1004;
 
 // Audio hotplug events
-pub const SDL_EVENT_AUDIO_DEVICE_ADDED = 0x1100;
-pub const SDL_EVENT_AUDIO_DEVICE_REMOVED = 0x1101;
-pub const SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED = 0x1102;
+pub const AUDIO_DEVICE_ADDED = 0x1100;
+pub const AUDIO_DEVICE_REMOVED = 0x1101;
+pub const AUDIO_DEVICE_FORMAT_CHANGED = 0x1102;
 
 // Sensor events
-pub const SDL_EVENT_SENSOR_UPDATE = 0x1200;
+pub const SENSOR_UPDATE = 0x1200;
 
 // Pen events
-pub const SDL_EVENT_PEN_PROXIMITY_IN = 0x1300;
-pub const SDL_EVENT_PEN_PROXIMITY_OUT = 0x1301;
-pub const SDL_EVENT_PEN_DOWN = 0x1302;
-pub const SDL_EVENT_PEN_UP = 0x1303;
-pub const SDL_EVENT_PEN_BUTTON_DOWN = 0x1304;
-pub const SDL_EVENT_PEN_BUTTON_UP = 0x1305;
-pub const SDL_EVENT_PEN_MOTION = 0x1306;
-pub const SDL_EVENT_PEN_AXIS = 0x1307;
+pub const PEN_PROXIMITY_IN = 0x1300;
+pub const PEN_PROXIMITY_OUT = 0x1301;
+pub const PEN_DOWN = 0x1302;
+pub const PEN_UP = 0x1303;
+pub const PEN_BUTTON_DOWN = 0x1304;
+pub const PEN_BUTTON_UP = 0x1305;
+pub const PEN_MOTION = 0x1306;
+pub const PEN_AXIS = 0x1307;
 
 // Camera events
-pub const SDL_EVENT_CAMERA_DEVICE_ADDED = 0x1400;
-pub const SDL_EVENT_CAMERA_DEVICE_REMOVED = 0x1401;
-pub const SDL_EVENT_CAMERA_DEVICE_APPROVED = 0x1402;
-pub const SDL_EVENT_CAMERA_DEVICE_DENIED = 0x1403;
+pub const CAMERA_DEVICE_ADDED = 0x1400;
+pub const CAMERA_DEVICE_REMOVED = 0x1401;
+pub const CAMERA_DEVICE_APPROVED = 0x1402;
+pub const CAMERA_DEVICE_DENIED = 0x1403;
 
 // Render events
-pub const SDL_EVENT_RENDER_TARGETS_RESET = 0x2000;
-pub const SDL_EVENT_RENDER_DEVICE_RESET = 0x2001;
-pub const SDL_EVENT_RENDER_DEVICE_LOST = 0x2002;
+pub const RENDER_TARGETS_RESET = 0x2000;
+pub const RENDER_DEVICE_RESET = 0x2001;
+pub const RENDER_DEVICE_LOST = 0x2002;
 
 // Private events
-pub const SDL_EVENT_PRIVATE0 = 0x4000;
-pub const SDL_EVENT_PRIVATE1 = 0x4001;
-pub const SDL_EVENT_PRIVATE2 = 0x4002;
-pub const SDL_EVENT_PRIVATE3 = 0x4003;
+pub const PRIVATE0 = 0x4000;
+pub const PRIVATE1 = 0x4001;
+pub const PRIVATE2 = 0x4002;
+pub const PRIVATE3 = 0x4003;
 
 // Internal events
-pub const SDL_EVENT_POLL_SENTINEL = 0x7F00;
+pub const POLL_SENTINEL = 0x7F00;
 
 // User events
-pub const SDL_EVENT_USER = 0x8000;
-pub const SDL_EVENT_LAST = 0xFFFF;
+pub const USER = 0x8000;
+pub const LAST = 0xFFFF;
 
 // === Event Structures ===
+// Note: This union uses padding for ABI compatibility
+// Individual event structs are defined in events.zig
+// The union must include all event types for proper ABI compatibility
+pub const Event = extern union {
+    type: EventType,
+    common: Common,
+    display: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        displayID: DisplayID,
+        data1: i32,
+        data2: i32,
+    },
+    window: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        data1: i32,
+        data2: i32,
+    },
+    kdevice: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: KeyboardID,
+    },
+    key: Keyboard,
+    edit: TextEditing,
+    edit_candidates: TextEditingCandidates,
+    text: TextInput,
+    mdevice: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: u32, // MouseID
+    },
+    motion: MouseMotion,
+    button: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        which: u32, // MouseID
+        button: u8,
+        down: bool,
+        clicks: u8,
+        padding: u8,
+        x: f32,
+        y: f32,
+    },
+    wheel: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        which: u32, // MouseID
+        x: f32,
+        y: f32,
+        direction: u32, // MouseWheelDirection
+        mouse_x: f32,
+        mouse_y: f32,
+        integer_x: i32,
+        integer_y: i32,
+    },
+    jdevice: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+    },
+    jaxis: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+        axis: u8,
+        padding1: u8,
+        padding2: u8,
+        padding3: u8,
+        value: i16,
+        padding4: u16,
+    },
+    jball: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+        ball: u8,
+        padding1: u8,
+        padding2: u8,
+        padding3: u8,
+        xrel: i16,
+        yrel: i16,
+    },
+    jhat: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+        hat: u8,
+        value: u8,
+        padding1: u8,
+        padding2: u8,
+    },
+    jbutton: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+        button: u8,
+        down: bool,
+        padding1: u8,
+        padding2: u8,
+    },
+    jbattery: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+        state: u32, // PowerState
+        percent: c_int,
+    },
+    gdevice: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+    },
+    gaxis: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+        axis: u8,
+        padding1: u8,
+        padding2: u8,
+        padding3: u8,
+        value: i16,
+        padding4: u16,
+    },
+    gbutton: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+        button: u8,
+        down: bool,
+        padding1: u8,
+        padding2: u8,
+    },
+    gtouchpad: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+        touchpad: i32,
+        finger: i32,
+        x: f32,
+        y: f32,
+        pressure: f32,
+    },
+    gsensor: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: JoystickID,
+        sensor: i32,
+        data: [3]f32,
+        sensor_timestamp: u64,
+    },
+    adevice: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: u32, // AudioDeviceID
+        recording: bool,
+        padding1: u8,
+        padding2: u8,
+        padding3: u8,
+    },
+    cdevice: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: u32, // CameraID
+    },
+    sensor: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        which: sensor.ID,
+        data: [6]f32,
+        sensor_timestamp: u64,
+    },
+    quit: Quit,
+    user: extern struct {
+        type: u32, // u32 because user events are not in EventType enum
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        code: i32,
+        data1: ?*anyopaque,
+        data2: ?*anyopaque,
+    },
+    tfinger: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        touchID: u64, // TouchID
+        fingerID: i64, // FingerID
+        x: f32,
+        y: f32,
+        dx: f32,
+        dy: f32,
+        pressure: f32,
+        windowID: WindowID,
+    },
+    pinch: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        scale: f32,
+        windowID: WindowID,
+    },
+    pproximity: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        which: PenID,
+    },
+    ptouch: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        which: PenID,
+        pen_state: u32,
+        x: f32,
+        y: f32,
+        eraser: bool,
+        down: bool,
+    },
+    pmotion: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        which: PenID,
+        pen_state: u32,
+        x: f32,
+        y: f32,
+    },
+    pbutton: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        which: PenID,
+        pen_state: u32,
+        x: f32,
+        y: f32,
+        button: u8,
+        down: bool,
+    },
+    paxis: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        which: PenID,
+        pen_state: u32,
+        x: f32,
+        y: f32,
+        axis: u32, // PenAxis
+        value: f32,
+    },
+    render: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+    },
+    drop: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        windowID: WindowID,
+        x: f32,
+        y: f32,
+        source: [*c]const u8,
+        data: [*c]const u8,
+    },
+    clipboard: extern struct {
+        type: EventType,
+        reserved: u32,
+        timestamp: u64,
+        owner: bool,
+        padding1: u8,
+        padding2: u8,
+        padding3: u8,
+        num_mime_types: i32,
+        mime_types: [*c]const [*c]const u8,
+    },
+    // padding for ABI - all event types can be accessed via casting
+    padding: [128]u8,
+};
+
+// Common event data
+pub const Common = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+};
+
+// Quit event
+pub const Quit = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+};
+
+// Keyboard event structure
+pub const Keyboard = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    which: core.KeyboardID,
+    scancode: core.Scancode,
+    key: core.Keycode,
+    mod: core.Keymod,
+    raw: u16,
+    down: bool,
+    repeat: bool,
+};
+
+// Mouse motion event structure
+pub const MouseMotion = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    which: u32, // MouseID
+    state: u32, // MouseButtonFlags
+    x: f32,
+    y: f32,
+    xrel: f32,
+    yrel: f32,
+};
+
+// Text input event structures
+pub const TextEditing = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    text: [*c]const u8,
+    start: i32,
+    length: i32,
+};
+
+pub const TextEditingCandidates = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    candidates: [*c]const [*c]const u8,
+    num_candidates: i32,
+    selected_candidate: i32,
+    horizontal: bool,
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
+};
+
+pub const TextInput = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    text: [*c]const u8,
+};
+
 // Window event structure
-pub const SDL_WindowEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
-    data1: core.Sint32,
-    data2: core.Sint32,
+pub const Window = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    data1: i32,
+    data2: i32,
 };
 
 // Display event structure
-pub const SDL_DisplayEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    displayID: core.SDL_DisplayID,
-    data1: core.Sint32,
-    data2: core.Sint32,
+pub const Display = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    displayID: core.DisplayID,
+    data1: i32,
+    data2: i32,
 };
 
 // Keyboard device event structure
-pub const SDL_KeyboardDeviceEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_KeyboardID,
+pub const KeyboardDevice = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.KeyboardID,
 };
 
 // Text editing event structure (defined in core.zig for union access, re-exported here)
@@ -224,255 +606,255 @@ pub const SDL_KeyboardDeviceEvent = extern struct {
 // pub const SDL_TextInputEvent = ... (see core.zig)
 
 // Mouse device event structure
-pub const SDL_MouseDeviceEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: input.SDL_MouseID,
+pub const MouseDevice = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: input.MouseID,
 };
 
 // Mouse button event structure
-pub const SDL_MouseButtonEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
-    which: input.SDL_MouseID,
-    button: core.Uint8,
+pub const MouseButton = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    which: input.MouseID,
+    button: u8,
     down: bool,
-    clicks: core.Uint8,
-    padding: core.Uint8,
+    clicks: u8,
+    padding: u8,
     x: f32,
     y: f32,
 };
 
 // Mouse wheel event structure
-pub const SDL_MouseWheelEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
-    which: input.SDL_MouseID,
+pub const MouseWheel = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    which: input.MouseID,
     x: f32,
     y: f32,
-    direction: input.SDL_MouseWheelDirection,
+    direction: input.MouseWheelDirection,
     mouse_x: f32,
     mouse_y: f32,
-    integer_x: core.Sint32,
-    integer_y: core.Sint32,
+    integer_x: i32,
+    integer_y: i32,
 };
 
 // Joystick device event structure
-pub const SDL_JoyDeviceEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
+pub const JoyDevice = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
 };
 
 // Joystick axis event structure
-pub const SDL_JoyAxisEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
-    axis: core.Uint8,
-    padding1: core.Uint8,
-    padding2: core.Uint8,
-    padding3: core.Uint8,
-    value: core.Sint16,
-    padding4: core.Uint16,
+pub const JoyAxis = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
+    axis: u8,
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
+    value: i16,
+    padding4: u16,
 };
 
 // Joystick ball event structure
-pub const SDL_JoyBallEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
-    ball: core.Uint8,
-    padding1: core.Uint8,
-    padding2: core.Uint8,
-    padding3: core.Uint8,
-    xrel: core.Sint16,
-    yrel: core.Sint16,
+pub const JoyBall = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
+    ball: u8,
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
+    xrel: i16,
+    yrel: i16,
 };
 
 // Joystick hat event structure
-pub const SDL_JoyHatEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
-    hat: core.Uint8,
-    value: core.Uint8,
-    padding1: core.Uint8,
-    padding2: core.Uint8,
+pub const JoyHat = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
+    hat: u8,
+    value: u8,
+    padding1: u8,
+    padding2: u8,
 };
 
 // Joystick button event structure
-pub const SDL_JoyButtonEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
-    button: core.Uint8,
+pub const JoyButton = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
+    button: u8,
     down: bool,
-    padding1: core.Uint8,
-    padding2: core.Uint8,
+    padding1: u8,
+    padding2: u8,
 };
 
 // Joystick battery event structure
-pub const SDL_JoyBatteryEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
-    state: power.SDL_PowerState,
+pub const JoyBattery = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
+    state: power.PowerState,
     percent: c_int,
 };
 
 // Gamepad device event structure
-pub const SDL_GamepadDeviceEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
+pub const GamepadDevice = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
 };
 
 // Gamepad axis event structure
-pub const SDL_GamepadAxisEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
-    axis: core.Uint8, // SDL_GamepadAxis
-    padding1: core.Uint8,
-    padding2: core.Uint8,
-    padding3: core.Uint8,
-    value: core.Sint16,
-    padding4: core.Uint16,
+pub const GamepadAxis = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
+    axis: u8, // GamepadAxis
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
+    value: i16,
+    padding4: u16,
 };
 
 // Gamepad button event structure
-pub const SDL_GamepadButtonEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
-    button: core.Uint8, // SDL_GamepadButton
+pub const GamepadButton = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
+    button: u8, // GamepadButton
     down: bool,
-    padding1: core.Uint8,
-    padding2: core.Uint8,
+    padding1: u8,
+    padding2: u8,
 };
 
 // Gamepad touchpad event structure
-pub const SDL_GamepadTouchpadEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
-    touchpad: core.Sint32,
-    finger: core.Sint32,
+pub const GamepadTouchpad = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
+    touchpad: i32,
+    finger: i32,
     x: f32,
     y: f32,
     pressure: f32,
 };
 
 // Gamepad sensor event structure
-pub const SDL_GamepadSensorEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_JoystickID,
-    sensor: core.Sint32, // SDL_SensorType
+pub const GamepadSensor = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: core.JoystickID,
+    sensor: i32, // SensorType
     data: [3]f32,
-    sensor_timestamp: core.Uint64,
+    sensor_timestamp: u64,
 };
 
 // Audio device event structure
-pub const SDL_AudioDeviceEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.Uint32, // SDL_AudioDeviceID
+pub const AudioDevice = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: u32, // AudioDeviceID
     recording: bool,
-    padding1: core.Uint8,
-    padding2: core.Uint8,
-    padding3: core.Uint8,
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
 };
 
 // Camera device event structure
-pub const SDL_CameraDeviceEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_CameraID,
+pub const CameraDevice = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: camera.ID,
 };
 
 // Sensor event structure
-pub const SDL_SensorEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    which: core.SDL_SensorID,
+pub const Sensor = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: sensor.ID,
     data: [6]f32,
-    sensor_timestamp: core.Uint64,
+    sensor_timestamp: u64,
 };
 
 // Touch finger event structure
-pub const SDL_TouchFingerEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    touchID: SDL_TouchID,
-    fingerID: SDL_FingerID,
+pub const TouchFinger = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    touchID: touch.ID,
+    fingerID: FingerID,
     x: f32,
     y: f32,
     dx: f32,
     dy: f32,
     pressure: f32,
-    windowID: SDL_WindowID,
+    windowID: WindowID,
 };
 
 // Pinch finger event structure
-pub const SDL_PinchFingerEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
+pub const PinchFinger = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
     scale: f32,
-    windowID: SDL_WindowID,
+    windowID: WindowID,
 };
 
 // Pen proximity event structure
-pub const SDL_PenProximityEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
-    which: core.SDL_PenID,
+pub const PenProximity = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    which: core.PenID,
 };
 
 // Pen motion event structure
-pub const SDL_PenMotionEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
-    which: core.SDL_PenID,
-    pen_state: core.Uint32, // SDL_PenInputFlags
+pub const PenMotion = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    which: core.PenID,
+    pen_state: u32, // PenInputFlags
     x: f32,
     y: f32,
 };
 
 // Pen touch event structure
-pub const SDL_PenTouchEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
-    which: core.SDL_PenID,
-    pen_state: core.Uint32, // SDL_PenInputFlags
+pub const PenTouch = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    which: core.PenID,
+    pen_state: u32, // PenInputFlags
     x: f32,
     y: f32,
     eraser: bool,
@@ -480,39 +862,39 @@ pub const SDL_PenTouchEvent = extern struct {
 };
 
 // Pen button event structure
-pub const SDL_PenButtonEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
-    which: core.SDL_PenID,
-    pen_state: core.Uint32, // SDL_PenInputFlags
+pub const PenButton = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    which: core.PenID,
+    pen_state: u32, // PenInputFlags
     x: f32,
     y: f32,
-    button: core.Uint8,
+    button: u8,
     down: bool,
 };
 
 // Pen axis event structure
-pub const SDL_PenAxisEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
-    which: core.SDL_PenID,
-    pen_state: core.Uint32, // SDL_PenInputFlags
+pub const PenAxis = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    which: core.PenID,
+    pen_state: u32, // PenInputFlags
     x: f32,
     y: f32,
-    axis: pen.SDL_PenAxis,
+    axis: pen.Axis,
     value: f32,
 };
 
 // Drop event structure
-pub const SDL_DropEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
+pub const Drop = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
     x: f32,
     y: f32,
     source: [*c]const u8,
@@ -520,71 +902,65 @@ pub const SDL_DropEvent = extern struct {
 };
 
 // Clipboard event structure
-pub const SDL_ClipboardEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
+pub const Clipboard = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
     owner: bool,
-    padding1: core.Uint8,
-    padding2: core.Uint8,
-    padding3: core.Uint8,
-    num_mime_types: core.Sint32,
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
+    num_mime_types: i32,
     mime_types: [*c]const [*c]const u8,
 };
 
 // User event structure
-pub const SDL_UserEvent = extern struct {
-    type: core.Uint32, // Uint32 because user events are not in SDL_EventType enum
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
-    code: core.Sint32,
+pub const User = extern struct {
+    type: u32, // u32 because user events are not in EventType enum
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
+    code: i32,
     data1: ?*anyopaque,
     data2: ?*anyopaque,
 };
 
 // Render event structure
-pub const SDL_RenderEvent = extern struct {
-    type: SDL_EventType,
-    reserved: core.Uint32,
-    timestamp: core.Uint64,
-    windowID: SDL_WindowID,
+pub const Render = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    windowID: WindowID,
 };
 
 // Event action enum
-pub const SDL_EventAction = enum(c_int) {
-    SDL_ADDEVENT,
-    SDL_PEEKEVENT,
-    SDL_GETEVENT,
+pub const Action = enum(c_int) {
+    ADDEVENT,
+    PEEKEVENT,
+    GETEVENT,
 };
 
 // === Event Functions ===
 extern fn SDL_PumpEvents() void;
-extern fn SDL_PollEvent(event: ?*SDL_Event) bool;
-extern fn SDL_WaitEvent(event: ?*SDL_Event) bool;
-extern fn SDL_WaitEventTimeout(event: ?*SDL_Event, timeoutMS: core.Sint32) bool;
-extern fn SDL_PushEvent(event: ?*const SDL_Event) bool;
-extern fn SDL_FilterEvents(callback: ?*const fn (?*anyopaque, ?*SDL_Event) callconv(.c) bool, userdata: ?*anyopaque) void;
-extern fn SDL_AddEventWatch(callback: ?*const fn (?*anyopaque, ?*SDL_Event) callconv(.c) bool, userdata: ?*anyopaque) bool;
-extern fn SDL_RemoveEventWatch(callback: ?*const fn (?*anyopaque, ?*SDL_Event) callconv(.c) bool, userdata: ?*anyopaque) void;
-extern fn SDL_PeepEvents(events: ?[*]SDL_Event, numevents: c_int, action: SDL_EventAction, minType: SDL_EventType, maxType: SDL_EventType) c_int;
-extern fn SDL_HasEvent(type: SDL_EventType) bool;
-extern fn SDL_HasEvents(minType: SDL_EventType, maxType: SDL_EventType) bool;
-extern fn SDL_FlushEvent(type: SDL_EventType) void;
-extern fn SDL_FlushEvents(minType: SDL_EventType, maxType: SDL_EventType) void;
-extern fn SDL_SetEventEnabled(type: SDL_EventType, enabled: bool) void;
-extern fn SDL_EventEnabled(type: SDL_EventType) bool;
-extern fn SDL_RegisterEvents(numevents: c_int) SDL_EventType;
-
-// Event filter functions
-extern fn SDL_GetEventFilter(filter: ?*?*const fn (?*anyopaque, ?*SDL_Event) callconv(.c) bool, userdata: ?*?*anyopaque) bool;
-extern fn SDL_SetEventFilter(filter: ?*const fn (?*anyopaque, ?*SDL_Event) callconv(.c) bool, userdata: ?*anyopaque) void;
-
-// Event description function
-extern fn SDL_GetEventDescription(event: ?*const SDL_Event, buf: [*]u8, buflen: c_int) c_int;
-
-// Window from event function
-extern fn SDL_GetWindowFromEvent(event: ?*const SDL_Event) ?*video.SDL_Window;
+extern fn SDL_PollEvent(event: ?*Event) bool;
+extern fn SDL_WaitEvent(event: ?*Event) bool;
+extern fn SDL_WaitEventTimeout(event: ?*Event, timeoutMS: i32) bool;
+extern fn SDL_PushEvent(event: ?*const Event) bool;
+extern fn SDL_FilterEvents(callback: ?*const fn (?*anyopaque, ?*Event) callconv(.c) bool, userdata: ?*anyopaque) void;
+extern fn SDL_AddEventWatch(callback: ?*const fn (?*anyopaque, ?*Event) callconv(.c) bool, userdata: ?*anyopaque) bool;
+extern fn SDL_RemoveEventWatch(callback: ?*const fn (?*anyopaque, ?*Event) callconv(.c) bool, userdata: ?*anyopaque) void;
+extern fn SDL_PeepEvents(events: ?[*]Event, numevents: c_int, action: Action, minType: EventType, maxType: EventType) c_int;
+extern fn SDL_HasEvent(type: EventType) bool;
+extern fn SDL_HasEvents(minType: EventType, maxType: EventType) bool;
+extern fn SDL_FlushEvent(type: EventType) void;
+extern fn SDL_FlushEvents(minType: EventType, maxType: EventType) void;
+extern fn SDL_SetEventEnabled(type: EventType, enabled: bool) void;
+extern fn SDL_EventEnabled(type: EventType) bool;
+extern fn SDL_RegisterEvents(numevents: c_int) EventType;
+extern fn SDL_GetEventFilter(filter: ?*?*const fn (?*anyopaque, ?*Event) callconv(.c) bool, userdata: ?*?*anyopaque) bool;
+extern fn SDL_SetEventFilter(filter: ?*const fn (?*anyopaque, ?*Event) callconv(.c) bool, userdata: ?*anyopaque) void;
+extern fn SDL_GetEventDescription(event: ?*const Event, buf: [*]u8, buflen: c_int) c_int;
+extern fn SDL_GetWindowFromEvent(event: ?*const Event) ?*video.WindowType;
 
 // === Public API ===
 // Basic event handling
@@ -593,8 +969,6 @@ pub const pollEvent = SDL_PollEvent;
 pub const waitEvent = SDL_WaitEvent;
 pub const waitEventTimeout = SDL_WaitEventTimeout;
 pub const pushEvent = SDL_PushEvent;
-
-// Event filtering and watching
 pub const filterEvents = SDL_FilterEvents;
 pub const addEventWatch = SDL_AddEventWatch;
 pub const removeEventWatch = SDL_RemoveEventWatch;
@@ -606,8 +980,6 @@ pub const flushEvents = SDL_FlushEvents;
 pub const setEventEnabled = SDL_SetEventEnabled;
 pub const eventEnabled = SDL_EventEnabled;
 pub const registerEvents = SDL_RegisterEvents;
-
-// Event utilities
 pub const getEventFilter = SDL_GetEventFilter;
 pub const setEventFilter = SDL_SetEventFilter;
 pub const getEventDescription = SDL_GetEventDescription;
@@ -615,71 +987,71 @@ pub const getWindowFromEvent = SDL_GetWindowFromEvent;
 
 // === Utility Functions ===
 /// Check if an event is a window event
-pub fn isWindowEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_WINDOW_FIRST and eventType <= SDL_EVENT_WINDOW_LAST;
+pub fn isWindowEvent(eventType: EventType) bool {
+    return eventType >= WINDOW_FIRST and eventType <= WINDOW_LAST;
 }
 
 /// Check if an event is a keyboard event
-pub fn isKeyboardEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_KEY_DOWN and eventType <= SDL_EVENT_SCREEN_KEYBOARD_HIDDEN;
+pub fn isKeyboardEvent(eventType: EventType) bool {
+    return eventType >= KEY_DOWN and eventType <= SCREEN_KEYBOARD_HIDDEN;
 }
 
 /// Check if an event is a mouse event
-pub fn isMouseEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_MOUSE_MOTION and eventType <= SDL_EVENT_MOUSE_REMOVED;
+pub fn isMouseEvent(eventType: EventType) bool {
+    return eventType >= MOUSE_MOTION and eventType <= MOUSE_REMOVED;
 }
 
 /// Check if an event is a gamepad event
-pub fn isGamepadEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_GAMEPAD_AXIS_MOTION and eventType <= SDL_EVENT_GAMEPAD_STEAM_HANDLE_UPDATED;
+pub fn isGamepadEvent(eventType: EventType) bool {
+    return eventType >= GAMEPAD_AXIS_MOTION and eventType <= GAMEPAD_STEAM_HANDLE_UPDATED;
 }
 
 /// Check if an event is a joystick event
-pub fn isJoystickEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_JOYSTICK_AXIS_MOTION and eventType <= SDL_EVENT_JOYSTICK_UPDATE_COMPLETE;
+pub fn isJoystickEvent(eventType: EventType) bool {
+    return eventType >= JOYSTICK_AXIS_MOTION and eventType <= JOYSTICK_UPDATE_COMPLETE;
 }
 
 /// Check if an event is a touch event
-pub fn isTouchEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_FINGER_DOWN and eventType <= SDL_EVENT_FINGER_CANCELED;
+pub fn isTouchEvent(eventType: EventType) bool {
+    return eventType >= FINGER_DOWN and eventType <= FINGER_CANCELED;
 }
 
 /// Check if an event is a pinch event
-pub fn isPinchEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_PINCH_BEGIN and eventType <= SDL_EVENT_PINCH_END;
+pub fn isPinchEvent(eventType: EventType) bool {
+    return eventType >= PINCH_BEGIN and eventType <= PINCH_END;
 }
 
 /// Check if an event is a drop event
-pub fn isDropEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_DROP_FILE and eventType <= SDL_EVENT_DROP_POSITION;
+pub fn isDropEvent(eventType: EventType) bool {
+    return eventType >= DROP_FILE and eventType <= DROP_POSITION;
 }
 
 /// Check if an event is an audio device event
-pub fn isAudioDeviceEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_AUDIO_DEVICE_ADDED and eventType <= SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED;
+pub fn isAudioDeviceEvent(eventType: EventType) bool {
+    return eventType >= AUDIO_DEVICE_ADDED and eventType <= AUDIO_DEVICE_FORMAT_CHANGED;
 }
 
 /// Check if an event is a camera event
-pub fn isCameraEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_CAMERA_DEVICE_ADDED and eventType <= SDL_EVENT_CAMERA_DEVICE_DENIED;
+pub fn isCameraEvent(eventType: EventType) bool {
+    return eventType >= CAMERA_DEVICE_ADDED and eventType <= CAMERA_DEVICE_DENIED;
 }
 
 /// Check if an event is a pen event
-pub fn isPenEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_PEN_PROXIMITY_IN and eventType <= SDL_EVENT_PEN_AXIS;
+pub fn isPenEvent(eventType: EventType) bool {
+    return eventType >= PEN_PROXIMITY_IN and eventType <= PEN_AXIS;
 }
 
 /// Check if an event is a display event
-pub fn isDisplayEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_DISPLAY_FIRST and eventType <= SDL_EVENT_DISPLAY_LAST;
+pub fn isDisplayEvent(eventType: EventType) bool {
+    return eventType >= DISPLAY_FIRST and eventType <= DISPLAY_LAST;
 }
 
 /// Check if an event is a render event
-pub fn isRenderEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_RENDER_TARGETS_RESET and eventType <= SDL_EVENT_RENDER_DEVICE_LOST;
+pub fn isRenderEvent(eventType: EventType) bool {
+    return eventType >= RENDER_TARGETS_RESET and eventType <= RENDER_DEVICE_LOST;
 }
 
 /// Check if an event is a user event
-pub fn isUserEvent(eventType: SDL_EventType) bool {
-    return eventType >= SDL_EVENT_USER;
+pub fn isUserEvent(eventType: EventType) bool {
+    return eventType >= USER;
 }

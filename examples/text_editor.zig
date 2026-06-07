@@ -13,7 +13,7 @@ const CURSOR_BLINK_RATE = 500; // milliseconds
 
 pub fn main() void {
     // Initialize SDL with video subsystem
-    if (!zsdl3.init(zsdl3.SDL_INIT_VIDEO)) {
+    if (!zsdl3.init(zsdl3.INIT_VIDEO)) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.debug.print("Failed to initialize SDL: {s}\n", .{err});
         return;
@@ -29,7 +29,7 @@ pub fn main() void {
     defer zsdl3.ttf.quit();
 
     // Create a window
-    const window = zsdl3.createWindow("Simple Text Editor", 800, 600, zsdl3.SDL_WINDOW_RESIZABLE);
+    const window = zsdl3.createWindow("Simple Text Editor", 800, 600, zsdl3.WINDOW_RESIZABLE);
     if (window == null) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.debug.print("Failed to create window: {s}\n", .{err});
@@ -48,6 +48,8 @@ pub fn main() void {
 
     // Try to open a font
     const font_paths = [_][:0]const u8{
+        "examples/MapleMono-CN-Regular.ttf",
+        "examples/MapleMono-Regular.ttf",
         "DejaVuSansMono.ttf",
         "examples/DejaVuSansMono.ttf",
         "/usr/share/fonts/Adwaita/AdwaitaSans-Regular.ttf",
@@ -59,8 +61,8 @@ pub fn main() void {
         "consola.ttf",
     };
 
-    var font: ?*zsdl3.ttf.TTF_Font = null;
-    
+    var font: ?*zsdl3.TtfFont = null;
+
     for (font_paths) |path| {
         font = zsdl3.ttf.openFont(path, @as(f32, @floatFromInt(LINE_HEIGHT)));
         if (font != null) {
@@ -80,7 +82,7 @@ pub fn main() void {
     var text_len: usize = 0;
     var cursor_pos: usize = 0;
     const scroll_y: f32 = 0;
-    
+
     // Initialize with some sample text
     const sample_text = "Welcome to Simple Text Editor!\n\nType here...\n\n";
     @memcpy(text_buffer[0..sample_text.len], sample_text);
@@ -97,14 +99,14 @@ pub fn main() void {
 
     while (running) {
         // Handle events
-        var event: zsdl3.SDL_Event = undefined;
+        var event: zsdl3.Event = undefined;
         while (zsdl3.pollEvent(&event)) {
             switch (event.type) {
-                zsdl3.SDL_EVENT_QUIT => running = false,
-                zsdl3.SDL_EVENT_KEY_DOWN => {
-                    if (event.key.scancode == zsdl3.SDL_SCANCODE_ESCAPE) {
+                zsdl3.EVENT_QUIT => running = false,
+                zsdl3.EVENT_KEY_DOWN => {
+                    if (event.key.scancode == zsdl3.SCANCODE_ESCAPE) {
                         running = false;
-                    } else if (event.key.scancode == zsdl3.SDL_SCANCODE_BACKSPACE) {
+                    } else if (event.key.scancode == zsdl3.SCANCODE_BACKSPACE) {
                         // Handle backspace
                         if (cursor_pos > 0) {
                             cursor_pos -= 1;
@@ -114,7 +116,7 @@ pub fn main() void {
                             }
                             text_len -= 1;
                         }
-                    } else if (event.key.scancode == zsdl3.SDL_SCANCODE_RETURN) {
+                    } else if (event.key.scancode == zsdl3.SCANCODE_RETURN) {
                         // Handle enter/return
                         if (text_len < MAX_TEXT_LENGTH - 1) {
                             // Insert newline
@@ -125,17 +127,17 @@ pub fn main() void {
                             cursor_pos += 1;
                             text_len += 1;
                         }
-                    } else if (event.key.scancode == zsdl3.SDL_SCANCODE_LEFT) {
+                    } else if (event.key.scancode == zsdl3.SCANCODE_LEFT) {
                         // Move cursor left
                         if (cursor_pos > 0) {
                             cursor_pos -= 1;
                         }
-                    } else if (event.key.scancode == zsdl3.SDL_SCANCODE_RIGHT) {
+                    } else if (event.key.scancode == zsdl3.SCANCODE_RIGHT) {
                         // Move cursor right
                         if (cursor_pos < text_len) {
                             cursor_pos += 1;
                         }
-                    } else if (event.key.scancode == zsdl3.SDL_SCANCODE_UP) {
+                    } else if (event.key.scancode == zsdl3.SCANCODE_UP) {
                         // Move cursor up (simple: move to start of previous line)
                         var pos = cursor_pos;
                         var found_newline = false;
@@ -152,7 +154,7 @@ pub fn main() void {
                         } else if (pos == 0) {
                             cursor_pos = 0;
                         }
-                    } else if (event.key.scancode == zsdl3.SDL_SCANCODE_DOWN) {
+                    } else if (event.key.scancode == zsdl3.SCANCODE_DOWN) {
                         // Move cursor down (simple: move to start of next line)
                         var pos = cursor_pos;
                         // Find next newline
@@ -168,7 +170,7 @@ pub fn main() void {
                         }
                     }
                 },
-                zsdl3.SDL_EVENT_TEXT_INPUT => {
+                zsdl3.EVENT_TEXT_INPUT => {
                     // Handle text input
                     if (text_len < MAX_TEXT_LENGTH - 1) {
                         const input_text = std.mem.span(event.text.text);
@@ -181,7 +183,7 @@ pub fn main() void {
                                 text_buffer[i + insert_len] = text_buffer[i];
                             }
                             // Insert new text
-                            @memcpy(text_buffer[cursor_pos..cursor_pos + insert_len], input_text[0..insert_len]);
+                            @memcpy(text_buffer[cursor_pos .. cursor_pos + insert_len], input_text[0..insert_len]);
                             cursor_pos += insert_len;
                             text_len += insert_len;
                         }
@@ -204,14 +206,14 @@ pub fn main() void {
 
         // Render text if font is available
         if (font) |f| {
-            const text_color = zsdl3.SDL_Color{ .r = 220, .g = 220, .b = 220, .a = 255 };
-            
+            const text_color = zsdl3.Color{ .r = 220, .g = 220, .b = 220, .a = 255 };
+
             var y_pos: f32 = PADDING - scroll_y;
             var current_line_start: usize = 0;
             var line_num: usize = 0;
             var cursor_line: usize = 0;
             var cursor_x_in_line: usize = 0;
-            
+
             // First pass: find cursor position
             var char_count: usize = 0;
             for (0..text_len) |i| {
@@ -231,7 +233,7 @@ pub fn main() void {
                 cursor_line = line_num;
                 cursor_x_in_line = char_count;
             }
-            
+
             // Second pass: render text line by line
             line_num = 0;
             current_line_start = 0;
@@ -244,22 +246,22 @@ pub fn main() void {
                         var line_buf: [1024]u8 = undefined;
                         @memcpy(line_buf[0..line_len], text_buffer[current_line_start..i]);
                         line_buf[line_len] = 0;
-                        
+
                         if (zsdl3.ttf.renderTextBlended(f, line_buf[0..line_len :0].ptr, 0, text_color)) |surf| {
                             defer zsdl3.destroySurface(surf);
                             if (zsdl3.createTextureFromSurface(renderer, surf)) |tex| {
                                 defer zsdl3.destroyTexture(tex);
                                 var tex_w: f32 = 0;
                                 var tex_h: f32 = 0;
-                                if (zsdl3.textureSize(tex, &tex_w, &tex_h)) {
-                                    const text_rect = zsdl3.SDL_FRect{
+                                if (zsdl3.getTextureSize(tex, &tex_w, &tex_h)) {
+                                    const text_rect = zsdl3.FRect{
                                         .x = PADDING,
                                         .y = y_pos,
                                         .w = tex_w,
                                         .h = tex_h,
                                     };
                                     _ = zsdl3.renderTexture(renderer, tex, null, &text_rect);
-                                    
+
                                     // Draw cursor if on this line
                                     if (line_num == cursor_line and cursor_visible) {
                                         // Calculate cursor x position
@@ -268,19 +270,19 @@ pub fn main() void {
                                             // Measure text up to cursor
                                             var cursor_buf: [1024]u8 = undefined;
                                             const cursor_text_len = @min(cursor_x_in_line, line_len);
-                                            @memcpy(cursor_buf[0..cursor_text_len], text_buffer[current_line_start..current_line_start + cursor_text_len]);
+                                            @memcpy(cursor_buf[0..cursor_text_len], text_buffer[current_line_start .. current_line_start + cursor_text_len]);
                                             cursor_buf[cursor_text_len] = 0;
-                                            
+
                                             var w: c_int = 0;
                                             var h: c_int = 0;
                                             if (zsdl3.ttf.getStringSize(f, cursor_buf[0..cursor_text_len :0].ptr, cursor_text_len, &w, &h)) {
                                                 cursor_x = PADDING + @as(f32, @floatFromInt(w));
                                             }
                                         }
-                                        
+
                                         // Draw cursor line
                                         _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 255, 255);
-                                        const cursor_rect = zsdl3.SDL_FRect{
+                                        const cursor_rect = zsdl3.FRect{
                                             .x = cursor_x,
                                             .y = y_pos,
                                             .w = 2,
@@ -295,7 +297,7 @@ pub fn main() void {
                         // Empty line - still draw cursor if needed
                         if (line_num == cursor_line and cursor_visible) {
                             _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 255, 255);
-                            const cursor_rect = zsdl3.SDL_FRect{
+                            const cursor_rect = zsdl3.FRect{
                                 .x = PADDING,
                                 .y = y_pos,
                                 .w = 2,
@@ -304,18 +306,18 @@ pub fn main() void {
                             _ = zsdl3.renderFillRect(renderer, &cursor_rect);
                         }
                     }
-                    
+
                     y_pos += LINE_HEIGHT;
                     line_num += 1;
                     current_line_start = i + 1;
                 }
             }
-            
+
             // Draw cursor at end of text if at end
             if (cursor_pos == text_len and cursor_visible) {
                 const cursor_y: f32 = PADDING + @as(f32, @floatFromInt(cursor_line * LINE_HEIGHT)) - scroll_y;
                 _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 255, 255);
-                const cursor_rect = zsdl3.SDL_FRect{
+                const cursor_rect = zsdl3.FRect{
                     .x = PADDING,
                     .y = cursor_y,
                     .w = 2,
@@ -326,7 +328,7 @@ pub fn main() void {
         } else {
             // Show message if no font available
             _ = zsdl3.setRenderDrawColor(renderer, 255, 100, 100, 255);
-            const msg_rect = zsdl3.SDL_FRect{
+            const msg_rect = zsdl3.FRect{
                 .x = 50,
                 .y = 250,
                 .w = 700,
