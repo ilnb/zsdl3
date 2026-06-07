@@ -11,6 +11,7 @@ pub fn build(b: *std.Build) void {
 
     mod.linkSystemLibrary("SDL3", .{});
     mod.linkSystemLibrary("SDL3_image", .{});
+    mod.linkSystemLibrary("SDL3_ttf", .{});
 
     const exe = b.addExecutable(.{
         .name = "zsdl3",
