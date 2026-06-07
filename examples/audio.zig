@@ -82,6 +82,7 @@ pub fn main(init: std.process.Init) void {
 
     const ga = init.gpa;
     const buf = ga.alloc(u8, num_samples * @sizeOf(f32)) catch return;
+    defer ga.free(buf);
     samples = @as([]f32, @ptrCast(@alignCast(buf)));
 
     for (0..num_samples) |n| {
