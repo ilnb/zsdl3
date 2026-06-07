@@ -43,7 +43,6 @@ pub fn build(b: *std.Build) void {
     const run_renderer_step = b.step("run-renderer", "Run the renderer example");
     const run_renderer_cmd = b.addRunArtifact(renderer);
     run_renderer_step.dependOn(&run_renderer_cmd.step);
-    run_renderer_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_renderer_cmd.addArgs(args);
     }
@@ -65,7 +64,6 @@ pub fn build(b: *std.Build) void {
     const run_cube_3d_step = b.step("run-cube-3d", "Run the 3D cube example");
     const run_cube_3d_cmd = b.addRunArtifact(cube_3d);
     run_cube_3d_step.dependOn(&run_cube_3d_cmd.step);
-    run_cube_3d_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_cube_3d_cmd.addArgs(args);
     }
@@ -87,7 +85,6 @@ pub fn build(b: *std.Build) void {
     const run_gpu_step = b.step("run-gpu", "Run the GPU example");
     const run_gpu_cmd = b.addRunArtifact(gpu);
     run_gpu_step.dependOn(&run_gpu_cmd.step);
-    run_gpu_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_gpu_cmd.addArgs(args);
     }
@@ -111,7 +108,6 @@ pub fn build(b: *std.Build) void {
     const run_image_cmd = b.addRunArtifact(image);
     run_image_cmd.setCwd(b.path("examples"));
     run_image_step.dependOn(&run_image_cmd.step);
-    run_image_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_image_cmd.addArgs(args);
     }
@@ -133,7 +129,6 @@ pub fn build(b: *std.Build) void {
     const run_basic_2d_step = b.step("run-basic-2d", "Run the basic 2D example");
     const run_basic_2d_cmd = b.addRunArtifact(basic_2d);
     run_basic_2d_step.dependOn(&run_basic_2d_cmd.step);
-    run_basic_2d_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_basic_2d_cmd.addArgs(args);
     }
@@ -157,7 +152,6 @@ pub fn build(b: *std.Build) void {
     const run_ttf_cmd = b.addRunArtifact(ttf);
     run_ttf_cmd.setCwd(b.path("examples"));
     run_ttf_step.dependOn(&run_ttf_cmd.step);
-    run_ttf_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_ttf_cmd.addArgs(args);
     }
@@ -181,7 +175,6 @@ pub fn build(b: *std.Build) void {
     const run_text_editor_cmd = b.addRunArtifact(text_editor);
     run_text_editor_cmd.setCwd(b.path("examples"));
     run_text_editor_step.dependOn(&run_text_editor_cmd.step);
-    run_text_editor_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_text_editor_cmd.addArgs(args);
     }
@@ -203,7 +196,6 @@ pub fn build(b: *std.Build) void {
     const run_audio_step = b.step("run-audio", "Run the audio example");
     const run_audio_cmd = b.addRunArtifact(audio);
     run_audio_step.dependOn(&run_audio_cmd.step);
-    run_audio_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_audio_cmd.addArgs(args);
     }
@@ -226,7 +218,6 @@ pub fn build(b: *std.Build) void {
     const run_dialog_cmd = b.addRunArtifact(dialog);
     run_dialog_cmd.setCwd(b.path("examples"));
     run_dialog_step.dependOn(&run_dialog_cmd.step);
-    run_dialog_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_dialog_cmd.addArgs(args);
     }
@@ -248,7 +239,6 @@ pub fn build(b: *std.Build) void {
     const run_process_step = b.step("run-process", "Run the process example");
     const run_process_cmd = b.addRunArtifact(process);
     run_process_step.dependOn(&run_process_cmd.step);
-    run_process_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_process_cmd.addArgs(args);
     }
@@ -270,12 +260,11 @@ pub fn build(b: *std.Build) void {
     const run_clipboard_step = b.step("run-clipboard", "Run the clipboard example");
     const run_clipboard_cmd = b.addRunArtifact(clipboard);
     run_clipboard_step.dependOn(&run_clipboard_cmd.step);
-    run_clipboard_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
         run_clipboard_cmd.addArgs(args);
     }
 
-    // b.installArtifact(exe);
+    b.installArtifact(exe);
 
     const run_step = b.step("run", "Run the app");
 
