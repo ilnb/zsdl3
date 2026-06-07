@@ -9,9 +9,9 @@ const std = @import("std");
 const zsdl3 = @import("zsdl3");
 
 const Vec3 = struct {
-    x: f32,
-    y: f32,
-    z: f32,
+    x: f32 = 0,
+    y: f32 = 0,
+    z: f32 = 0,
 };
 
 const Tri = struct {
@@ -97,7 +97,7 @@ fn computeNormal(a: Vec3, b: Vec3, c: Vec3) Vec3 {
     const ny = u.z * v.x - u.x * v.z;
     const nz = u.x * v.y - u.y * v.x;
     const len = @sqrt(nx * nx + ny * ny + nz * nz);
-    if (len == 0) return .{ .x = 0, .y = 0, .z = 0 };
+    if (len == 0) return Vec3{};
     return .{ .x = nx / len, .y = ny / len, .z = nz / len };
 }
 
@@ -162,12 +162,12 @@ pub fn main() void {
         const light_len = @sqrt(light_dir.x * light_dir.x + light_dir.y * light_dir.y + light_dir.z * light_dir.z);
         const light = Vec3{ .x = light_dir.x / light_len, .y = light_dir.y / light_len, .z = light_dir.z / light_len };
 
-        var transformed_verts: [8]Vec3 = undefined;
+        var trans_verts: [8]Vec3 = undefined;
         for (&cube_verts, 0..) |v, i| {
             var tv = rotateY(v, yaw);
             tv = rotateX(tv, pitch);
             tv.z += 6.0;
-            transformed_verts[i] = tv;
+            trans_verts[i] = tv;
         }
 
         const TriDepth = struct {
@@ -177,9 +177,9 @@ pub fn main() void {
 
         var tri_depths: [cube_tris.len]TriDepth = undefined;
         for (&cube_tris, 0..) |tri, i| {
-            const va = transformed_verts[tri.indices[0]];
-            const vb = transformed_verts[tri.indices[1]];
-            const vc = transformed_verts[tri.indices[2]];
+            const va = trans_verts[tri.indices[0]];
+            const vb = trans_verts[tri.indices[1]];
+            const vc = trans_verts[tri.indices[2]];
             const depth = (va.z + vb.z + vc.z) / 3.0;
             tri_depths[i] = .{ .tri_idx = i, .depth = depth };
         }
@@ -190,15 +190,15 @@ pub fn main() void {
             }
         }.lessThan);
 
-        var sdl_vertices: [cube_tris.len * 3]zsdl3.Vertex = undefined;
+        var sdl_verts: [cube_tris.len * 3]zsdl3.Vertex = undefined;
         var indices: [cube_tris.len * 3]c_int = undefined;
 
         var vert_count: usize = 0;
         for (&tri_depths) |td| {
             const tri = cube_tris[td.tri_idx];
-            const va = transformed_verts[tri.indices[0]];
-            const vb = transformed_verts[tri.indices[1]];
-            const vc = transformed_verts[tri.indices[2]];
+            const va = trans_verts[tri.indices[0]];
+            const vb = trans_verts[tri.indices[1]];
+            const vc = trans_verts[tri.indices[2]];
 
             const normal = computeNormal(va, vb, vc);
             const dot = normal.x * light.x + normal.y * light.y + normal.z * light.z;
@@ -210,7 +210,7 @@ pub fn main() void {
 
             const color = tri.color;
             for (&[_]struct { x: f32, y: f32 }{ .{ .x = pa.x, .y = pa.y }, .{ .x = pb.x, .y = pb.y }, .{ .x = pc.x, .y = pc.y } }) |p| {
-                sdl_vertices[vert_count] = .{
+                sdl_verts[vert_count] = .{
                     .position = .{ .x = p.x, .y = p.y },
                     .color = .{
                         .r = color[0] * intensity,
@@ -225,7 +225,7 @@ pub fn main() void {
             }
         }
 
-        _ = zsdl3.renderGeometry(renderer, null, &sdl_vertices, @intCast(vert_count), &indices, @intCast(indices.len));
+        _ = zsdl3.renderGeometry(renderer, null, &sdl_verts, @intCast(vert_count), &indices, @intCast(indices.len));
 
         _ = zsdl3.renderPresent(renderer);
         zsdl3.delay(16);

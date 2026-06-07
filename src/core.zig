@@ -28,9 +28,9 @@ pub const INIT_CAMERA: InitFlags = 0x00010000;
 
 // App result enum
 pub const AppResult = enum(c_int) {
-    APP_CONTINUE,
-    APP_SUCCESS,
-    APP_FAILURE,
+    CONTINUE,
+    SUCCESS,
+    FAILURE,
 };
 
 // Function pointers for app callbacks
@@ -43,7 +43,7 @@ pub const AppQuit_fn = ?*const fn (?*anyopaque, AppResult) callconv(.c) void;
 // Main thread callback
 pub const MainThreadCallback = ?*const fn (?*anyopaque) callconv(.c) void;
 
-// Event types (basic)
+// Event types
 pub const EventType = c_uint;
 pub const EVENT_FIRST = 0;
 pub const EVENT_QUIT = 0x100;

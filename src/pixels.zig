@@ -24,24 +24,24 @@ pub const BLENDMODE_MUL = 0x00000008;
 pub const BLENDMODE_INVALID = 0x7FFFFFFF;
 
 pub const BlendOperation = enum(c_int) {
-    BLENDOPERATION_ADD = 0x1,
-    BLENDOPERATION_SUBTRACT = 0x2,
-    BLENDOPERATION_REV_SUBTRACT = 0x3,
-    BLENDOPERATION_MINIMUM = 0x4,
-    BLENDOPERATION_MAXIMUM = 0x5,
+    ADD = 0x1,
+    SUBTRACT = 0x2,
+    REV_SUBTRACT = 0x3,
+    MINIMUM = 0x4,
+    MAXIMUM = 0x5,
 };
 
 pub const BlendFactor = enum(c_int) {
-    BLENDFACTOR_ZERO = 0x1,
-    BLENDFACTOR_ONE = 0x2,
-    BLENDFACTOR_SRC_COLOR = 0x3,
-    BLENDFACTOR_ONE_MINUS_SRC_COLOR = 0x4,
-    BLENDFACTOR_SRC_ALPHA = 0x5,
-    BLENDFACTOR_ONE_MINUS_SRC_ALPHA = 0x6,
-    BLENDFACTOR_DST_COLOR = 0x7,
-    BLENDFACTOR_ONE_MINUS_DST_COLOR = 0x8,
-    BLENDFACTOR_DST_ALPHA = 0x9,
-    BLENDFACTOR_ONE_MINUS_DST_ALPHA = 0xA,
+    ZERO = 0x1,
+    ONE = 0x2,
+    SRC_COLOR = 0x3,
+    ONE_MINUS_SRC_COLOR = 0x4,
+    SRC_ALPHA = 0x5,
+    ONE_MINUS_SRC_ALPHA = 0x6,
+    DST_COLOR = 0x7,
+    ONE_MINUS_DST_COLOR = 0x8,
+    DST_ALPHA = 0x9,
+    ONE_MINUS_DST_ALPHA = 0xA,
 };
 
 // Color
@@ -62,27 +62,27 @@ pub const Palette = extern struct {
 
 // Point and Rect
 pub const Point = extern struct {
-    x: c_int,
-    y: c_int,
+    x: c_int = 0,
+    y: c_int = 0,
 };
 
 pub const FPoint = extern struct {
-    x: f32,
-    y: f32,
+    x: f32 = 0,
+    y: f32 = 0,
 };
 
 pub const Rect = extern struct {
-    x: c_int,
-    y: c_int,
-    w: c_int,
-    h: c_int,
+    x: c_int = 0,
+    y: c_int = 0,
+    w: c_int = 0,
+    h: c_int = 0,
 };
 
 pub const FRect = extern struct {
-    x: f32,
-    y: f32,
-    w: f32,
-    h: f32,
+    x: f32 = 0,
+    y: f32 = 0,
+    w: f32 = 0,
+    h: f32 = 0,
 };
 
 // Pixel format details
