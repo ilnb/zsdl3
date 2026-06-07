@@ -5,8 +5,6 @@
 
 Thin, zero-overhead bindings for SDL3, SDL3_image, and SDL3_ttf — without `@cImport`.
 
-> **Need Zig 0.15.2?** Use the [`zig-0.15.2`](https://github.com/felixuxx/zsdl3/tree/zig-0.15.2) branch.
-
 ---
 
 ## Install
@@ -28,7 +26,7 @@ Or build SDL3 from source.
 ## Depend on it
 
 ```bash
-zig fetch --save git+https://github.com/felixuxx/zsdl3.git
+zig fetch --save git+https://github.com/ilnb/zsdl3.git
 ```
 
 Then in `build.zig`:
@@ -62,30 +60,7 @@ zig build run      # run the app
 
 ## Usage
 
-```zig
-const std = @import("std");
-const zsdl3 = @import("zsdl3");
-
-pub fn main() void {
-    if (!zsdl3.init(zsdl3.SDL_INIT_VIDEO)) return;
-    defer zsdl3.quit();
-
-    const window = zsdl3.createWindow("Demo", 800, 600, zsdl3.SDL_WINDOW_RESIZABLE) orelse return;
-    defer zsdl3.destroyWindow(window);
-
-    const renderer = zsdl3.createRenderer(window, null) orelse return;
-    defer zsdl3.destroyRenderer(renderer);
-
-    while (true) {
-        var event: zsdl3.SDL_Event = undefined;
-        while (zsdl3.pollEvent(&event)) if (event.type == zsdl3.SDL_EVENT_QUIT) return;
-        _ = zsdl3.setRenderDrawColor(renderer, 30, 60, 90, 255);
-        _ = zsdl3.renderClear(renderer);
-        zsdl3.renderPresent(renderer);
-        zsdl3.delay(16);
-    }
-}
-```
+Checkout examples.
 
 All functions use short Zig-friendly names (`init`, `createWindow`, `pollEvent`). Full API at [SDL3 Wiki](https://wiki.libsdl.org/SDL3/APIByCategory).
 
