@@ -109,7 +109,7 @@ pub fn main() void {
     }
     defer zsdl3.quit();
 
-    const window = zsdl3.createWindow("3D Cube", 800, 600, zsdl3.WINDOW_RESIZABLE);
+    const window = zsdl3.createWindow("3D Cube", 800, 600, 0);
     if (window == null) {
         const err = zsdl3.getError() orelse "Unknown error";
         std.log.err("Failed to create window: {s}", .{err});
