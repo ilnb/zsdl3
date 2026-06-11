@@ -201,12 +201,12 @@ pub fn main() void {
         }
 
         // Clear screen with background color
-        _ = zsdl3.setRenderDrawColor(renderer, 30, 30, 35, 255);
+        _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 30, .g = 30, .b = 35 });
         _ = zsdl3.renderClear(renderer);
 
         // Render text if font is available
         if (font) |f| {
-            const text_color = zsdl3.Color{ .r = 220, .g = 220, .b = 220, .a = 255 };
+            const text_color = zsdl3.Color{ .r = 220, .g = 220, .b = 220 };
 
             var y_pos: f32 = PADDING - scroll_y;
             var current_line_start: usize = 0;
@@ -281,7 +281,7 @@ pub fn main() void {
                                         }
 
                                         // Draw cursor line
-                                        _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 255, 255);
+                                        _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 255, .g = 255, .b = 255 });
                                         const cursor_rect = zsdl3.FRect{
                                             .x = cursor_x,
                                             .y = y_pos,
@@ -296,7 +296,7 @@ pub fn main() void {
                     } else {
                         // Empty line - still draw cursor if needed
                         if (line_num == cursor_line and cursor_visible) {
-                            _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 255, 255);
+                            _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 255, .g = 255, .b = 255 });
                             const cursor_rect = zsdl3.FRect{
                                 .x = PADDING,
                                 .y = y_pos,
@@ -316,7 +316,7 @@ pub fn main() void {
             // Draw cursor at end of text if at end
             if (cursor_pos == text_len and cursor_visible) {
                 const cursor_y: f32 = PADDING + @as(f32, @floatFromInt(cursor_line * LINE_HEIGHT)) - scroll_y;
-                _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 255, 255);
+                _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 255, .g = 255, .b = 255 });
                 const cursor_rect = zsdl3.FRect{
                     .x = PADDING,
                     .y = cursor_y,
@@ -327,7 +327,7 @@ pub fn main() void {
             }
         } else {
             // Show message if no font available
-            _ = zsdl3.setRenderDrawColor(renderer, 255, 100, 100, 255);
+            _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 255, .g = 100, .b = 100 });
             const msg_rect = zsdl3.FRect{
                 .x = 50,
                 .y = 250,

@@ -69,11 +69,11 @@ pub fn main() void {
                     }
 
                     // Clear screen with blue background
-                    _ = zsdl3.setRenderDrawColor(rend, 50, 100, 150, 255);
+                    _ = zsdl3.setRenderDrawColor(rend, .{ .r = 50, .g = 100, .b = 150 });
                     _ = zsdl3.renderClear(rend);
 
                     // Draw movable rectangle
-                    _ = zsdl3.setRenderDrawColor(rend, 255, 255, 0, 255);
+                    _ = zsdl3.setRenderDrawColor(rend, .{ .r = 255, .g = 255, .b = 0 });
                     const rect = zsdl3.FRect{ .x = rect_x, .y = rect_y, .w = 200, .h = 150 };
                     _ = zsdl3.renderFillRect(rend, &rect);
 

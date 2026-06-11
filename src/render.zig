@@ -268,7 +268,7 @@ pub const updateTexture = SDL_UpdateTexture;
 pub const updateNVTexture = SDL_UpdateNVTexture;
 pub const updateYUVTexture = SDL_UpdateYUVTexture;
 pub fn setTextureColorMod(texture: ?*Texture, color: Color) bool {
-    return SDL_SetTextureColorMod(texture, color.r, color.g, color.b, color.a);
+    return SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
 }
 pub const getTextureColorMod = SDL_GetTextureColorMod;
 pub const setTextureAlphaMod = SDL_SetTextureAlphaMod;

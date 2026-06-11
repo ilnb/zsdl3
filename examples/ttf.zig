@@ -86,12 +86,12 @@ pub fn main() void {
         }
 
         // Clear screen with dark background
-        _ = zsdl3.setRenderDrawColor(renderer, 20, 20, 30, 255);
+        _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 20, .g = 20, .b = 30 });
         _ = zsdl3.renderClear(renderer);
 
         // Render text if font is available
         if (font) |f| {
-            const white_color = zsdl3.Color{ .r = 255, .g = 255, .b = 255, .a = 255 };
+            const white_color = zsdl3.Color{ .r = 255, .g = 255, .b = 255 };
 
             // Render text to surface and then to texture
             // Pass 0 for length to use null-terminated string
@@ -114,7 +114,7 @@ pub fn main() void {
             }
         } else {
             // Show message if no font available
-            _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 0, 255);
+            _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 255, .g = 255, .b = 0 });
             const msg_rect = zsdl3.FRect{
                 .x = 50,
                 .y = 250,

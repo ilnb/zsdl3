@@ -65,16 +65,16 @@ pub fn main() void {
         }
 
         // Clear screen with a color (dark blue)
-        _ = zsdl3.setRenderDrawColor(renderer, 30, 60, 90, 255);
+        _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 30, .g = 60, .b = 90 });
         _ = zsdl3.renderClear(renderer);
 
         // Draw full brightness rectangle (yellow)
-        _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 0, 255);
+        _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 255, .g = 255, .b = 0 });
         _ = zsdl3.renderFillRect(renderer, &rect_a);
 
         // Draw with color scale 0.5 (dimmer)
         _ = zsdl3.setRenderColorScale(renderer, 0.5);
-        _ = zsdl3.setRenderDrawColor(renderer, 255, 255, 0, 255);
+        _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 255, .g = 255, .b = 0 });
         _ = zsdl3.renderFillRect(renderer, &rect_b);
         var scale: f32 = 0;
         _ = zsdl3.getRenderColorScale(renderer, &scale);
@@ -82,7 +82,7 @@ pub fn main() void {
         _ = zsdl3.setRenderColorScale(renderer, 1.0);
 
         // Draw non-intersecting rect (cyan)
-        _ = zsdl3.setRenderDrawColor(renderer, 0, 255, 255, 255);
+        _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 0, .g = 255, .b = 255 });
         _ = zsdl3.renderFillRect(renderer, &rect_c);
 
         // Present the rendered frame

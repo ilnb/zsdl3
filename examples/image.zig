@@ -95,7 +95,7 @@ pub fn main() void {
             }
         }
 
-        _ = zsdl3.setRenderDrawColor(renderer, 30, 30, 30, 255);
+        _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 30, .g = 30, .b = 30 });
         _ = zsdl3.renderClear(renderer);
 
         // Draw original texture (left half)

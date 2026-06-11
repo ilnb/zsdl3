@@ -143,7 +143,7 @@ pub fn main() void {
             }
         }
 
-        _ = zsdl3.setRenderDrawColor(renderer, 15, 15, 20, 255);
+        _ = zsdl3.setRenderDrawColor(renderer, .{ .r = 15, .g = 15, .b = 20 });
         _ = zsdl3.renderClear(renderer);
 
         var output_w: c_int = 800;
