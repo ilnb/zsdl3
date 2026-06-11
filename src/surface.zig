@@ -3,6 +3,7 @@
 
 const fs = @import("fs.zig");
 const pixels = @import("pixels.zig");
+const Color = pixels.Color;
 const props = @import("props.zig");
 const render = @import("render.zig");
 const Format = pixels.Format;
@@ -127,7 +128,9 @@ pub const HasRLE = SDL_SurfaceHasRLE;
 pub const setColorKey = SDL_SetSurfaceColorKey;
 pub const HasColorKey = SDL_SurfaceHasColorKey;
 pub const getColorKey = SDL_GetSurfaceColorKey;
-pub const setColorMod = SDL_SetSurfaceColorMod;
+pub fn setColorMod(surface: ?*Surface, color: Color) bool {
+    return SDL_SetSurfaceColorMod(surface, color.r, color.g, color.b);
+}
 pub const getColorMod = SDL_GetSurfaceColorMod;
 pub const setAlphaMod = SDL_SetSurfaceAlphaMod;
 pub const getAlphaMod = SDL_GetSurfaceAlphaMod;

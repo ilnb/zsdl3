@@ -154,8 +154,12 @@ pub inline fn SDL_RectEmpty(r: ?*const Rect) bool {
 pub const getPixelFormatName = SDL_GetPixelFormatName;
 pub const getMasksForPixelFormat = SDL_GetMasksForPixelFormat;
 pub const composeCustomBlendMode = SDL_ComposeCustomBlendMode;
-pub const mapRGB = SDL_MapRGB;
-pub const mapRGBA = SDL_MapRGBA;
+pub fn mapRGB(format: Format, palette: ?*Palette, color: Color) u32 {
+    return SDL_MapRGB(format, palette, color.r, color.g, color.b);
+}
+pub fn mapRGBA(format: Format, palette: ?*Palette, color: Color) u32 {
+    return SDL_MapRGBA(format, palette, color.r, color.g, color.b, color.a);
+}
 pub const getRGB = SDL_GetRGB;
 pub const getRGBA = SDL_GetRGBA;
 pub const allocPalette = SDL_AllocPalette;

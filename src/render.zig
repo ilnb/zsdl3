@@ -4,6 +4,7 @@
 const core = @import("core.zig");
 const pixels = @import("pixels.zig");
 const props = @import("props.zig");
+const Color = pixels.Color;
 const Format = pixels.Format;
 const BlendMode = pixels.BlendMode;
 const Rect = pixels.Rect;
@@ -229,7 +230,9 @@ pub const createWindowAndRenderer = SDL_CreateWindowAndRenderer;
 pub const destroy = SDL_DestroyRenderer;
 pub const clear = SDL_RenderClear;
 pub const isPresent = SDL_RenderPresent;
-pub const setDrawColor = SDL_SetRenderDrawColor;
+pub fn setDrawColor(render: ?*Renderer, color: Color) bool {
+    return SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
+}
 pub const createTexture = SDL_CreateTexture;
 pub const createTextureWithProps = SDL_CreateTextureWithProperties;
 pub const destroyTexture = SDL_DestroyTexture;
@@ -264,7 +267,9 @@ pub const unlockTexture = SDL_UnlockTexture;
 pub const updateTexture = SDL_UpdateTexture;
 pub const updateNVTexture = SDL_UpdateNVTexture;
 pub const updateYUVTexture = SDL_UpdateYUVTexture;
-pub const setTextureColorMod = SDL_SetTextureColorMod;
+pub fn setTextureColorMod(texture: ?*Texture, color: Color) bool {
+    return SDL_SetTextureColorMod(texture, color.r, color.g, color.b, color.a);
+}
 pub const getTextureColorMod = SDL_GetTextureColorMod;
 pub const setTextureAlphaMod = SDL_SetTextureAlphaMod;
 pub const getTextureAlphaMod = SDL_GetTextureAlphaMod;
@@ -295,9 +300,13 @@ pub const renderCoordinatesToWindow = SDL_RenderCoordinatesToWindow;
 pub const convertEventToRenderCoordinates = SDL_ConvertEventToRenderCoordinates;
 pub const setScale = SDL_SetRenderScale;
 pub const getScale = SDL_GetRenderScale;
-pub const setDrawColorFloat = SDL_SetRenderDrawColorFloat;
+pub fn setDrawColorFloat(render: ?*Renderer, color: FColor) bool {
+    return SDL_SetRenderDrawColorFloat(render, color.r, color.g, color.b, color.a);
+}
 pub const getDrawColorFloat = SDL_GetRenderDrawColorFloat;
-pub const setTextureColorModFloat = SDL_SetTextureColorModFloat;
+pub fn setTextureColorModFloat(texture: ?*Texture, color: FColor) bool {
+    return SDL_SetTextureColorModFloat(texture, color.r, color.g, color.b, color.a);
+}
 pub const getTextureColorModFloat = SDL_GetTextureColorModFloat;
 pub const setTextureAlphaModFloat = SDL_SetTextureAlphaModFloat;
 pub const getTextureAlphaModFloat = SDL_GetTextureAlphaModFloat;
