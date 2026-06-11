@@ -229,7 +229,7 @@ pub const createSoftwareRenderer = SDL_CreateSoftwareRenderer;
 pub const createWindowAndRenderer = SDL_CreateWindowAndRenderer;
 pub const destroy = SDL_DestroyRenderer;
 pub const clear = SDL_RenderClear;
-pub const isPresent = SDL_RenderPresent;
+pub const present = SDL_RenderPresent;
 pub fn setDrawColor(render: ?*Renderer, color: Color) bool {
     return SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
 }
