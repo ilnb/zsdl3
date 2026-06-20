@@ -13,6 +13,8 @@ const FPoint = pixels.FPoint;
 const surface = @import("surface.zig");
 const Surface = surface.Surface;
 const video = @import("video.zig");
+const events = @import("events.zig");
+const Event = events.Event;
 
 // Import types
 // Render structs
@@ -138,9 +140,9 @@ extern fn SDL_GetRenderDrawBlendMode(renderer: ?*Renderer, blendMode: ?*BlendMod
 extern fn SDL_SetRenderDrawBlendMode(renderer: ?*Renderer, blendMode: BlendMode) bool;
 
 // Texture operations
-extern fn SDL_CreateTextureFromSurface(renderer: ?*Renderer, surface: ?*surface.Surface) ?*Texture;
-extern fn SDL_LockTexture(texture: ?*Texture, rect: ?*const pixels.Rect, pixels: ?*?*anyopaque, pitch: ?*c_int) bool;
-extern fn SDL_LockTextureToSurface(texture: ?*Texture, rect: ?*const pixels.Rect, surface: ?*?*surface.Surface) bool;
+extern fn SDL_CreateTextureFromSurface(renderer: ?*Renderer, surface: ?*Surface) ?*Texture;
+extern fn SDL_LockTexture(texture: ?*Texture, rect: ?*const Rect, pixels: ?*?*anyopaque, pitch: ?*c_int) bool;
+extern fn SDL_LockTextureToSurface(texture: ?*Texture, rect: ?*const pixels.Rect, surface: ?*?*Surface) bool;
 extern fn SDL_UnlockTexture(texture: ?*Texture) void;
 extern fn SDL_UpdateNVTexture(texture: ?*Texture, rect: ?*const pixels.Rect, y_plane: ?[*]const u8, y_pitch: c_int, uv_plane: ?[*]const u8, uv_pitch: c_int) bool;
 extern fn SDL_UpdateYUVTexture(texture: ?*Texture, rect: ?*const pixels.Rect, y_plane: ?[*]const u8, y_pitch: c_int, u_plane: ?[*]const u8, u_pitch: c_int, v_plane: ?[*]const u8, v_pitch: c_int) bool;
@@ -168,7 +170,7 @@ extern fn SDL_GetRenderLogicalPresentation(renderer: ?*Renderer, w: ?*c_int, h: 
 extern fn SDL_RenderDebugText(renderer: ?*Renderer, x: f32, y: f32, str: ?[*:0]const u8) bool;
 extern fn SDL_RenderDebugTextFormat(renderer: ?*Renderer, x: f32, y: f32, fmt: ?[*:0]const u8, ...) bool;
 extern fn SDL_RenderGeometryRaw(renderer: ?*Renderer, texture: ?*Texture, xy: ?[*]const f32, xy_stride: c_int, color: ?[*]const FColor, color_stride: c_int, uv: ?[*]const f32, uv_stride: c_int, num_vertices: c_int, indices: ?*const anyopaque, num_indices: c_int, size_indices: c_int) bool;
-extern fn SDL_RenderReadPixels(renderer: ?*Renderer, rect: ?*const pixels.Rect) ?*pixels.Surface;
+extern fn SDL_RenderReadPixels(renderer: ?*Renderer, rect: ?*const pixels.Rect) ?*Surface;
 extern fn SDL_FlushRenderer(renderer: ?*Renderer) bool;
 
 // Query functions
@@ -179,7 +181,7 @@ extern fn SDL_GetRenderer(window: ?*video.WindowType) ?*Renderer;
 // Coordinate system functions
 extern fn SDL_RenderCoordinatesFromWindow(renderer: ?*Renderer, window_x: f32, window_y: f32, render_x: ?*f32, render_y: ?*f32) bool;
 extern fn SDL_RenderCoordinatesToWindow(renderer: ?*Renderer, render_x: f32, render_y: f32, window_x: ?*f32, window_y: ?*f32) bool;
-extern fn SDL_ConvertEventToRenderCoordinates(renderer: ?*Renderer, event: ?*core.Event) bool;
+extern fn SDL_ConvertEventToRenderCoordinates(renderer: ?*Renderer, event: ?*Event) bool;
 
 // Scale and color functions
 extern fn SDL_SetRenderScale(renderer: ?*Renderer, scale_x: f32, scale_y: f32) bool;
