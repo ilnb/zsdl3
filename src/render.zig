@@ -238,8 +238,8 @@ pub fn setDrawColor(render: ?*Renderer, color: Color) bool {
 pub const createTexture = SDL_CreateTexture;
 pub const createTextureWithProps = SDL_CreateTextureWithProperties;
 pub const destroyTexture = SDL_DestroyTexture;
-pub const renderTexture = SDL_RenderTexture;
-pub const renderGeometry = SDL_RenderGeometry;
+pub const texture = SDL_RenderTexture;
+pub const geometry = SDL_RenderGeometry;
 pub const getName = SDL_GetRendererName;
 pub const getProps = SDL_GetRendererProperties;
 pub const getOutputSize = SDL_GetRenderOutputSize;
@@ -251,12 +251,12 @@ pub const getWindow = SDL_GetRenderWindow;
 pub const getRendererFromTexture = SDL_GetRendererFromTexture;
 pub const renderPoint = SDL_RenderPoint;
 pub const renderPoints = SDL_RenderPoints;
-pub const renderLine = SDL_RenderLine;
-pub const renderLines = SDL_RenderLines;
-pub const renderRect = SDL_RenderRect;
-pub const renderRects = SDL_RenderRects;
-pub const renderFillRect = SDL_RenderFillRect;
-pub const renderFillRects = SDL_RenderFillRects;
+pub const line = SDL_RenderLine;
+pub const lines = SDL_RenderLines;
+pub const rect = SDL_RenderRect;
+pub const rects = SDL_RenderRects;
+pub const fillRect = SDL_RenderFillRect;
+pub const fillRects = SDL_RenderFillRects;
 pub const setTarget = SDL_SetRenderTarget;
 pub const getTarget = SDL_GetRenderTarget;
 pub const getDrawColor = SDL_GetRenderDrawColor;
@@ -269,8 +269,8 @@ pub const unlockTexture = SDL_UnlockTexture;
 pub const updateTexture = SDL_UpdateTexture;
 pub const updateNVTexture = SDL_UpdateNVTexture;
 pub const updateYUVTexture = SDL_UpdateYUVTexture;
-pub fn setTextureColorMod(texture: ?*Texture, color: Color) bool {
-    return SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
+pub fn setTextureColorMod(tex: ?*Texture, color: Color) bool {
+    return SDL_SetTextureColorMod(tex, color.r, color.g, color.b);
 }
 pub const getTextureColorMod = SDL_GetTextureColorMod;
 pub const setTextureAlphaMod = SDL_SetTextureAlphaMod;
@@ -287,18 +287,18 @@ pub const getRenderClipRect = SDL_GetRenderClipRect;
 pub const renderClipEnabled = SDL_RenderClipEnabled;
 pub const setLogicalPresentation = SDL_SetRenderLogicalPresentation;
 pub const getLogicalPresentation = SDL_GetRenderLogicalPresentation;
-pub const renderDebugText = SDL_RenderDebugText;
-pub const renderDebugTextFormat = SDL_RenderDebugTextFormat;
-pub const renderGeometryRaw = SDL_RenderGeometryRaw;
-pub const renderReadPixels = SDL_RenderReadPixels;
+pub const debugText = SDL_RenderDebugText;
+pub const debugTextFormat = SDL_RenderDebugTextFormat;
+pub const geometryRaw = SDL_RenderGeometryRaw;
+pub const readPixels = SDL_RenderReadPixels;
 pub const flush = SDL_FlushRenderer;
 pub const getRenderVSync = SDL_GetRenderVSync;
 pub const setRenderVSync = SDL_SetRenderVSync;
 pub const getNumDrivers = SDL_GetNumRenderDrivers;
 pub const getDriver = SDL_GetRenderDriver;
 pub const getRenderer = SDL_GetRenderer;
-pub const renderCoordinatesFromWindow = SDL_RenderCoordinatesFromWindow;
-pub const renderCoordinatesToWindow = SDL_RenderCoordinatesToWindow;
+pub const coordinatesFromWindow = SDL_RenderCoordinatesFromWindow;
+pub const coordinatesToWindow = SDL_RenderCoordinatesToWindow;
 pub const convertEventToRenderCoordinates = SDL_ConvertEventToRenderCoordinates;
 pub const setScale = SDL_SetRenderScale;
 pub const getScale = SDL_GetRenderScale;
@@ -306,19 +306,19 @@ pub fn setDrawColorFloat(render: ?*Renderer, color: FColor) bool {
     return SDL_SetRenderDrawColorFloat(render, color.r, color.g, color.b, color.a);
 }
 pub const getDrawColorFloat = SDL_GetRenderDrawColorFloat;
-pub fn setTextureColorModFloat(texture: ?*Texture, color: FColor) bool {
-    return SDL_SetTextureColorModFloat(texture, color.r, color.g, color.b, color.a);
+pub fn setTextureColorModFloat(tex: ?*Texture, color: FColor) bool {
+    return SDL_SetTextureColorModFloat(tex, color.r, color.g, color.b, color.a);
 }
 pub const getTextureColorModFloat = SDL_GetTextureColorModFloat;
 pub const setTextureAlphaModFloat = SDL_SetTextureAlphaModFloat;
 pub const getTextureAlphaModFloat = SDL_GetTextureAlphaModFloat;
 pub const setRenderTextureAddressMode = SDL_SetRenderTextureAddressMode;
 pub const getRenderTextureAddressMode = SDL_GetRenderTextureAddressMode;
-pub const renderTexture9Grid = SDL_RenderTexture9Grid;
-pub const renderTexture9GridTiled = SDL_RenderTexture9GridTiled;
-pub const renderTextureAffine = SDL_RenderTextureAffine;
-pub const renderTextureRotated = SDL_RenderTextureRotated;
-pub const renderTextureTiled = SDL_RenderTextureTiled;
+pub const texture9Grid = SDL_RenderTexture9Grid;
+pub const texture9GridTiled = SDL_RenderTexture9GridTiled;
+pub const textureAffine = SDL_RenderTextureAffine;
+pub const textureRotated = SDL_RenderTextureRotated;
+pub const textureTiled = SDL_RenderTextureTiled;
 pub const getDefaultTextureScaleMode = SDL_GetDefaultTextureScaleMode;
 pub const setDefaultTextureScaleMode = SDL_SetDefaultTextureScaleMode;
 pub const getLogicalPresentationRect = SDL_GetRenderLogicalPresentationRect;
